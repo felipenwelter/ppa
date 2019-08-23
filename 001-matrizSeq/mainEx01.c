@@ -28,6 +28,7 @@ int main(int argc, char *argv[]) {
 		printf("Error: Na abertura dos arquivos.");
 		exit(1);
 	}
+	
 	extrai_parametros_matriz(fmat, &N, &La, &vet_line, &nr_line);
 	//return 1;
 	mat_a.matriz = NULL;

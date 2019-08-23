@@ -26,10 +26,10 @@ int main(int argc, char **argv) {
 	sprintf (filename, "%dx%d-mat.map", linha, coluna);
 
 	fmat0 = fopen(filename,"w");
-  if (fmat0 == NULL) {
-		printf("Error: Na abertura dos arquivos.");
-		exit(1);
-  }
+	if (fmat0 == NULL) {
+			printf("Error: Na abertura dos arquivos.");
+			exit(1);
+	}
 
 	mma0.matriz = NULL;
 	mma0.lin = linha;
