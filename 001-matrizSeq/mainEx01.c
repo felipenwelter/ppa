@@ -34,8 +34,12 @@ int main(int argc, char *argv[]) {
 	mat_a.matriz = NULL;
 	mat_a.lin = N;
 	mat_a.col = La;
+
+	int x = malocar(&mat_a);
+	printf("%d resultado da chamada do malocar\n\n",x);
+
 	if (malocar(&mat_a)) {
-		printf ("ERROR: Out of memory\n");
+		printf ("ERROR: Out of memory x\n");
 	}
 	filein_matriz (mat_a.matriz, N, La, fmat, vet_line, nr_line);
 	free (vet_line);
@@ -60,6 +64,9 @@ int main(int argc, char *argv[]) {
 	free (vet_line);
 	fclose(fmat);
 	// %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
+
+	mimprimir (&mat_a);
+	mimprimir (&mat_b);
 
 	// %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
 	//              Comparação dos resultados

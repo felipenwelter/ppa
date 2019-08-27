@@ -32,42 +32,76 @@ int malocar (mymatriz *matriz){
     printf("malocar called \n");
     int lin = matriz->lin;
     int col = matriz->col;
-    printf("linhas: %d e colunas: %d \n\n", lin,col);
+    printf("linhas: %d e colunas: %d \n", lin,col);
 
-    /*int **new_matriz = NULL;
+    int **new_matriz; //ponteiro para a matriz
+    int i, j; //auxiliar
 
-	new_matriz = (int **) malloc(nLinha * sizeof(int *));
-	if (!new_matriz) {
-		printf("ERROR: Out of memory\n");
-		return NULL;
-	}
+    if (lin < 1 || col < 1) { //verifica parametros recebidos
+      printf ("** Erro: Parametro invalido **\n");
+      return (0);;
+    }else{
+      printf ("lin > 1 and col > 1\n");
+    }
 
-  	for (int i =0; i < nLinha; i++) {
-			new_matriz[i] = (int *) malloc(sizeof(int)*nColuna);
-			if (!new_matriz) {
-				printf("ERROR: Out of memory\n");
-				return NULL;
-			}
-	}
-	return new_matriz;*/
+    // aloca as linhas da matriz
+    new_matriz = (int **) calloc (lin, sizeof(int *));	//Um vetor de 'lin' ponteiros para int
+    if (new_matriz == NULL) {
+      printf ("** Erro: Memoria Insuficiente **\n");
+      return (0);
+    }else{
+      printf("new_matriz lines allocated. addresses:\n");
+      for (i = 0; i < lin; i++){
+        printf("[%d] %p\n",i, &new_matriz[i]);
+      }
+    }
+
+    // aloca as colunas da matriz
+    for ( i = 0; i < lin; i++ ) {
+      new_matriz[i] = (int*) calloc (col, sizeof(int));	// 'lin' vetores de 'col' ints
+      if (new_matriz[i] == NULL) {
+        printf ("** Erro: Memoria Insuficiente **\n");
+        return (0);
+      }else{
+        for (j = 0; j < col; j++){
+          printf("[%d][%d] %p\n", i, j, &new_matriz[i][j]);
+        }
+      }
+    }
+
+    return (1); // retorna o ponteiro para a matriz
 }
 
+
+
+
 int mgerar(mymatriz *matriz, int valor){
+    printf("mgerar");
     return 0;
 }
 
 int mimprimir (mymatriz *matriz){
+
+  if (matriz == NULL){
+    printf(" Problema encontrado - Matriz não alocada.\n");
+    return (0);
+  }else{
+    printf(" Ok - Matriz alocada.\n");
+  }
     return 0;
 }
 
 int mzerar (mymatriz *matriz){
+    printf("mzerar");
     return 0;
 }
 
 int mliberar (mymatriz *matriz){
+    printf("mliberar");
     return 0;
 }
 
 int mcomparar (mymatriz *mat_a, mymatriz *mat_b){
+    printf("mcomparar");
     return 0;
 }
