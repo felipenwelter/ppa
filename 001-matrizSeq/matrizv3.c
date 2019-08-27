@@ -39,7 +39,7 @@ int malocar (mymatriz *matriz){
 
     if (lin < 1 || col < 1) { //verifica parametros recebidos
       printf ("** Erro: Parametro invalido **\n");
-      return (0);;
+      return (-1);
     }else{
       printf ("lin > 1 and col > 1\n");
     }
@@ -48,7 +48,7 @@ int malocar (mymatriz *matriz){
     new_matriz = (int **) calloc (lin, sizeof(int *));	//Um vetor de 'lin' ponteiros para int
     if (new_matriz == NULL) {
       printf ("** Erro: Memoria Insuficiente **\n");
-      return (0);
+      return (-1);
     }else{
       printf("new_matriz lines allocated. addresses:\n");
       for (i = 0; i < lin; i++){
@@ -61,7 +61,7 @@ int malocar (mymatriz *matriz){
       new_matriz[i] = (int*) calloc (col, sizeof(int));	// 'lin' vetores de 'col' ints
       if (new_matriz[i] == NULL) {
         printf ("** Erro: Memoria Insuficiente **\n");
-        return (0);
+        return (-1);
       }else{
         for (j = 0; j < col; j++){
           printf("[%d][%d] %p\n", i, j, &new_matriz[i][j]);
@@ -69,7 +69,10 @@ int malocar (mymatriz *matriz){
       }
     }
 
-    return (1); // retorna o ponteiro para a matriz
+    //aponta para nova matriz
+    matriz->matriz = new_matriz;
+
+    return (0); // retorna o ponteiro para a matriz
 }
 
 
