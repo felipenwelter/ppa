@@ -36,14 +36,11 @@ int main(int argc, char *argv[]) {
 	mat_a.col = La;
 
 	if (malocar(&mat_a)) {
-		printf ("ERROR: Out of memory x\n");
+		printf ("ERROR: Out of memory\n");
 	}
-	printf("chegou aqui %d %p %d %d %p\n\n", nr_line, &vet_line, La, N, &(mat_a));
 	filein_matriz (mat_a.matriz, N, La, fmat, vet_line, nr_line);
-	
 	free (vet_line);
 	fclose(fmat);
-	
 	// %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
 	// %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
@@ -64,17 +61,6 @@ int main(int argc, char *argv[]) {
 	free (vet_line);
 	fclose(fmat);
 	// %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
-
-	mimprimir (&mat_a);
-	mzerar (&mat_a);
-	mimprimir (&mat_a);
-
-	mimprimir (&mat_b);
-	mzerar (&mat_b);
-	mimprimir (&mat_b);
-	
-	mgerar(&mat_a, -9999);
-	mimprimir (&mat_a);
 
 	// %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
 	//              Comparação dos resultados
