@@ -269,10 +269,10 @@ int extrai_parametros_matriz ( FILE *const fin, int* linha,
     char *getLine = NULL;
     int *line_matriz_file;
 
-    //#if _DEBUG_
+    #if _DEBUG_
     printf("FILEIN_MATRIZ:\tMatriz (linha/coluna) = %d/%d\n", linha, coluna);
     printf("{##########################}\n");
-    //#endif
+    #endif
 
     if (linha != (nr_line -2)) {
       printf("ERRO: Numero de linha da matriz nao esta correta!\n");
@@ -285,17 +285,17 @@ int extrai_parametros_matriz ( FILE *const fin, int* linha,
       line_matriz_file = (int *) calloc (vet_ind[i+2], sizeof(int));
       splitv2(getLine, ',', vet_ind[i+2], line_matriz_file);
 
-      //#if _DEBUG_
+      #if _DEBUG_
       printf("FILEIN_MATRIZ:\t{%s}\n", getLine);
       printf("FILEIN_MATRIZ:\t(%d){%d}{%d}{%d}\n", i, line_matriz_file[0], line_matriz_file[1], line_matriz_file[2]);
-      //#endif
+      #endif
 
       free (getLine);
       for (int j=0; j < coluna; j++){
 
-        //#if _DEBUG_
+        #if _DEBUG_
         printf("FILEIN_MATRIZ:\t(i[%d],j[%d])%d\n", i , j, line_matriz_file[j]);
-        //#endif
+        #endif
 
         matriz[i][j] = line_matriz_file[j];
       }

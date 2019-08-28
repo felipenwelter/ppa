@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #ifndef SOME_HEADER_FILE_H
 #define SOME_HEADER_FILE_H

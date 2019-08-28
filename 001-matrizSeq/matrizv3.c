@@ -79,29 +79,100 @@ int malocar (mymatriz *matriz){
 
 
 int mgerar(mymatriz *matriz, int valor){
-    printf("mgerar");
-    return 0;
+  
+  int value = 0;
+
+  if (matriz == NULL){
+    printf(" Problema - Matriz não alocada.\n");
+    return (-1);
+  }
+
+  /* srand(time(NULL)) objetiva inicializar o gerador de números aleatórios
+  com o valor da função time(NULL). Este por sua vez, é calculado
+  como sendo o total de segundos passados desde 1 de janeiro de 1970
+  até a data atual.
+  Desta forma, a cada execução o valor da "semente" será diferente.
+  */
+  srand(time(NULL));
+
+  //alimenta matriz com valores
+  for (int i = 0; i < matriz->lin; i++){
+    for (int j = 0; j < matriz->col; j++){
+      switch(valor){
+      case -9999:
+        value = rand() % 100;
+        break;
+      default:
+        value = 0;
+        break;
+      }
+
+      matriz->matriz[i][j] = value;
+
+    }
+  }
+
+  return 0;
 }
+
+
 
 int mimprimir (mymatriz *matriz){
 
   if (matriz == NULL){
-    printf(" Problema encontrado - Matriz não alocada.\n");
-    return (0);
-  }else{
-    printf(" Ok - Matriz alocada.\n");
+    printf(" Problema - Matriz não alocada.\n");
+    return (-1);
   }
-    return 0;
+    
+  //imprime primeira linha de cabeçalho
+  printf("   ");
+  for (int j = 0; j < matriz->col; j++){
+      //printf(" %d ", j);  . fica ruim quando valores maior que um digito
+  }
+  printf("\n");
+
+  //imprime o conteúdo da matriz
+  for (int i = 0; i < matriz->lin; i++){
+    printf("%d: ", i); //imprime número da linha
+    for (int j = 0; j < matriz->col; j++){
+      printf("[%d]", matriz->matriz[i][j]);
+    }
+    printf("\n");
+  }
+
+  return (0);
 }
 
+
+
 int mzerar (mymatriz *matriz){
-    printf("mzerar");
-    return 0;
+  
+  if (matriz == NULL){
+    printf(" Problema - Matriz não alocada.\n");
+    return (0);
+  }
+
+  //zera cada posição da matriz
+  for (int i = 0; i < matriz->lin; i++){
+    for (int j = 0; j < matriz->col; j++){
+      matriz->matriz[i][j] = 0;
+    }
+  }
+
+  return 0;
 }
 
 int mliberar (mymatriz *matriz){
-    printf("mliberar");
-    return 0;
+
+  if (matriz != NULL){
+    //libera a alocação de cada linha
+    for (int i = 0; i < matriz->lin; i++){
+        free(matriz->matriz[i]);
+    }
+    free(matriz->matriz);
+  }
+  
+  return 0;
 }
 
 int mcomparar (mymatriz *mat_a, mymatriz *mat_b){
