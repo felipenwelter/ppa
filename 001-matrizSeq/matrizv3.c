@@ -2,7 +2,6 @@
 
 // gerência de matrizes
 int malocar (mymatriz *matriz){
-    
     printf("malocar called \n");
     int lin = matriz->lin;
     int col = matriz->col;

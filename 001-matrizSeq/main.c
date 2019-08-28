@@ -1,24 +1,31 @@
-#define N 10
-#define M 10
+#define N 10 //número de linhas da matriz
+#define M 10 //número de colunas da matriz
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include "matrizv3.h"
 
-//gcc -Wall -O3 matrizv3.o toolsv3.o main.c -o main
-
-
+/*
+function main
+Executa um teste simplificado das funções da biblioteca de matrizes, conforme exemplo disponibilizado
+pelo professor no enunciado do exercício.
+@return int, sempre nulo
+*/
 int main(int argc, char *argv[]) {
 
+    //declara objeto do tipo mymatriz (definido em matrizv3.h)
     mymatriz mat_a;
     
+    //inicializa definições de tamanho da matriz
 	mat_a.matriz = NULL;
 	mat_a.lin = N;
 	mat_a.col = M;
 
+    //aloca memória para matriz
     if (malocar(&mat_a)) {
         printf ("Error..\n");
+        exit(0);
     };
     
     mimprimir(&mat_a);
