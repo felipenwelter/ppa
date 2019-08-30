@@ -14,6 +14,9 @@ all: $(TARGET)
 %: %.o
 	$(CC) $(LDFLAGS) $^ -o $@
 
+main: main.c matrizv3.o toolsv3.o
+			$(CC) $(CCFLAGS) matrizv3.o toolsv3.o main.c -o $@ $(LDFLAGS)
+
 mainEx01: mainEx01.c matrizv3.o toolsv3.o
 			$(CC) $(CCFLAGS) matrizv3.o toolsv3.o mainEx01.c -o $@ $(LDFLAGS)
 

@@ -1,44 +1,35 @@
 #include "matrizv3.h"
 
-// gerência de matrizes
+/*
+function malocar
+Alocação espaço de memória para uma matriz
+@return result, inteiro 0 para sucesso e outro valor para erro
+@param matriz, ponteiro para objeto do tipo mymatriz
+*/
 int malocar (mymatriz *matriz){
-    printf("malocar called \n");
-    int lin = matriz->lin;
-    int col = matriz->col;
-    printf("linhas: %d e colunas: %d \n", lin,col);
 
-    int **new_matriz; //ponteiro para a matriz
-    int i, j; //auxiliar
+    int **new_matriz; //ponteiro para a nova matriz
+    int i; //auxiliar
 
-    if (lin < 1 || col < 1) { //verifica parametros recebidos
+    //verifica parametros recebidos
+    if (matriz->lin < 1 || matriz->col < 1) { 
       printf ("** Erro: Parametro invalido **\n");
       return (-1);
-    }else{
-      printf ("lin > 1 and col > 1\n");
     }
 
-    // aloca as linhas da matriz
-    new_matriz = (int **) calloc (lin, sizeof(int *));	//Um vetor de 'lin' ponteiros para int
-    if (new_matriz == NULL) {
+    // aloca linhas da matriz
+    new_matriz = (int **) calloc (matriz->lin, sizeof(int *));	//Um vetor de 'lin' ponteiros para int
+    if (new_matriz == NULL) { //verifica se foi alocado memória para a matriz
       printf ("** Erro: Memoria Insuficiente **\n");
       return (-1);
-    }else{
-      printf("new_matriz lines allocated. addresses:\n");
-      for (i = 0; i < lin; i++){
-        printf("[%d] %p\n",i, &new_matriz[i]);
-      }
     }
 
-    // aloca as colunas da matriz
-    for ( i = 0; i < lin; i++ ) {
-      new_matriz[i] = (int*) calloc (col, sizeof(int));	// 'lin' vetores de 'col' ints
+    // para cada linha aloca espaço para as colunas da matriz
+    for ( i = 0; i < matriz->lin; i++ ) {
+      new_matriz[i] = (int*) calloc (matriz->col, sizeof(int));	// 'lin' vetores de 'col' ints
       if (new_matriz[i] == NULL) {
         printf ("** Erro: Memoria Insuficiente **\n");
         return (-1);
-      }else{
-        for (j = 0; j < col; j++){
-          printf("[%d][%d] %p\n", i, j, &new_matriz[i][j]);
-        }
       }
     }
 
@@ -49,22 +40,28 @@ int malocar (mymatriz *matriz){
 }
 
 
-
-
+/*
+function mgerar
+Inicializa matriz com valores
+@return result, inteiro 0 para sucesso e outro valor para erro
+@param matriz, ponteiro para objeto do tipo mymatriz
+@param valor, indica regra para preenchimento da matriz, sendo:
+              -9999: preenche com valores aleatórios
+              outro valor: preenche com zero
+*/
 int mgerar(mymatriz *matriz, int valor){
   
-  int value = 0;
+  int value = 0; //auxiliar
 
+  //verifica se foi alocado memória para a matriz
   if (matriz == NULL){
-    printf(" Problema - Matriz não alocada.\n");
+    printf ("** Erro: Memoria Insuficiente **\n");
     return (-1);
   }
 
-  /* srand(time(NULL)) objetiva inicializar o gerador de números aleatórios
-  com o valor da função time(NULL). Este por sua vez, é calculado
-  como sendo o total de segundos passados desde 1 de janeiro de 1970
-  até a data atual.
-  Desta forma, a cada execução o valor da "semente" será diferente.
+  /* srand(time(NULL)) inicializa o gerador de números aleatórios com o valor
+  da função time(NULL), que é calculado como sendo o total de segundos passados
+  desde 01/01/70 até hoje. Assim, a cada execução o valor da "semente" será diferente.
   */
   srand(time(NULL));
 
@@ -89,40 +86,52 @@ int mgerar(mymatriz *matriz, int valor){
 }
 
 
-
+/*
+function mimprimir
+Imprime toda a matriz
+@return result, inteiro 0 para sucesso e outro valor para erro
+@param matriz, ponteiro para objeto do tipo mymatriz
+*/
 int mimprimir (mymatriz *matriz){
 
+  //verifica se foi alocado memória para a matriz
   if (matriz == NULL){
     printf(" Problema - Matriz não alocada.\n");
     return (-1);
   }
     
   //imprime primeira linha de cabeçalho
-  printf("   ");
+  printf("\t");
   for (int j = 0; j < matriz->col; j++){
-      //printf(" %d ", j);  . fica ruim quando valores maior que um digito
+      printf("#%d\t", j);
   }
   printf("\n");
 
   //imprime o conteúdo da matriz
   for (int i = 0; i < matriz->lin; i++){
-    printf("%d: ", i); //imprime número da linha
+    printf("%d:\t", i); //imprime número da linha
     for (int j = 0; j < matriz->col; j++){
-      printf("[%d]", matriz->matriz[i][j]);
+      printf("[%d]\t", matriz->matriz[i][j]);
     }
     printf("\n");
   }
-
+  printf("\n");
   return (0);
 }
 
 
-
+/*
+function mzerar
+Zera o conteúdo de todas as posições da matriz
+@return result, inteiro 0 para sucesso e outro valor para erro
+@param matriz, ponteiro para objeto do tipo mymatriz
+*/
 int mzerar (mymatriz *matriz){
   
+  //verifica se foi alocado memória para a matriz
   if (matriz == NULL){
     printf(" Problema - Matriz não alocada.\n");
-    return (0);
+    return (-1);
   }
 
   //zera cada posição da matriz
@@ -135,6 +144,13 @@ int mzerar (mymatriz *matriz){
   return 0;
 }
 
+
+/*
+function mliberar
+Libera a memória alocada para a matriz
+@return result, inteiro 0 para sucesso e outro valor para erro
+@param matriz, ponteiro para objeto do tipo mymatriz
+*/
 int mliberar (mymatriz *matriz){
 
   if (matriz != NULL){
@@ -148,6 +164,13 @@ int mliberar (mymatriz *matriz){
   return 0;
 }
 
+/*
+function mcomparar
+Compara duas matrizes e indica se são exatamente iguais
+@return result, inteiro 0 para matrizes iguais e -1 para diferentes
+@param mat_a, ponteiro para objeto do tipo mymatriz
+@param mat_b, ponteiro para objeto do tipo mymatriz
+*/
 int mcomparar (mymatriz *mat_a, mymatriz *mat_b){
     printf("mcomparar");
     return 0;
