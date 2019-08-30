@@ -100,7 +100,7 @@ Será apresentado em tela:
 [mat_a vs mat_b]	** Erro: Matrizes tem tamanhos diferentes **
 ```
 
-A mensagem acima é apresentada porque as matrizes tem tamanhos diferentes e não podem ser comparadas. Caso a chamada seja feita com matrizes do mesmo tamanho, nenhuma mensagem será apresentada.
+A mensagem acima é apresentada porque as matrizes tem tamanhos diferentes e não podem ser comparadas. Caso a chamada seja feita com matrizes do mesmo tamanho será impresso se são iguais ou diferentes.
 
 
 ## Análise dinâmica:
@@ -147,7 +147,7 @@ Será apresentado em tela:
 ==20862== 
 ==20862== HEAP SUMMARY:
 ==20862==     in use at exit: 0 bytes in 0 blocks
-==20862==   total heap usage: 70 allocs, 70 frees, 11,301 bytes allocated
+==20862==   total heap usage: 67 allocs, 67 frees, 11,280 bytes allocated
 ==20862== 
 ==20862== All heap blocks were freed -- no leaks are possible
 ==20862== 
