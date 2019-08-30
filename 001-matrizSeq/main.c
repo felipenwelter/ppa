@@ -10,7 +10,7 @@
 function main
 Executa um teste simplificado das funções da biblioteca de matrizes, conforme exemplo disponibilizado
 pelo professor no enunciado do exercício.
-@return int, sempre nulo
+@return int, 0 para ok e outro valor para erro
 */
 int main(int argc, char *argv[]) {
 
@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     //aloca memória para matriz
     if (malocar(&mat_a)) {
         printf ("Error..\n");
-        exit(0);
+        exit(-1);
     };
     
     mimprimir(&mat_a);
@@ -35,6 +35,6 @@ int main(int argc, char *argv[]) {
     mimprimir(&mat_a);
     mliberar(&mat_a);
     
-    return 0;
+    return (0);
 
 }

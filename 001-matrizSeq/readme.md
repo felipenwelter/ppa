@@ -1,4 +1,4 @@
-Disciplina de Programação Paralela Avançada
+# PPA - Biblioteca de Matrizes
 
 ## Objetivo:
 - Implementar uma biblioteca de manipulação de matrizes de inteiro em C.
@@ -107,7 +107,7 @@ A mensagem acima é apresentada porque as matrizes tem tamanhos diferentes e nã
 
 Para realizar uma análise dinâmica do código e verificar eventuais problemas, deve-se previamente ter instalado o programa *valgrind* e executar o comando abaixo:
 
-- (main.c) Para análise simplificada:
+- Para main.c:
 > `valgrind ./main`
 
 Será apresentado em tela:
@@ -131,31 +131,7 @@ Será apresentado em tela:
 ==20635== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 ```
 
-- (main.c) Para análise detalhada:
-> `valgrind --leak-check=full ./main`
-
-Será apresentado em tela:
-```
-==20845== Memcheck, a memory error detector
-==20845== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==20845== Using Valgrind-3.13.0 and LibVEX; rerun with -h for copyright info
-==20845== Command: ./main
-==20845== 
-
-...
-
-==20845== 
-==20845== HEAP SUMMARY:
-==20845==     in use at exit: 0 bytes in 0 blocks
-==20845==   total heap usage: 12 allocs, 12 frees, 1,504 bytes allocated
-==20845== 
-==20845== All heap blocks were freed -- no leaks are possible
-==20845== 
-==20845== For counts of detected and suppressed errors, rerun with: -v
-==20845== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
-```
-
-- (mainEx01.c) Para análise simplificada:
+- Para mainEx01.c:
 > `valgrind ./mainEx01 mat_a3x4.example mat_b4x3.example`
 
 Será apresentado em tela:
@@ -177,28 +153,4 @@ Será apresentado em tela:
 ==20862== 
 ==20862== For counts of detected and suppressed errors, rerun with: -v
 ==20862== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
-```
-
-- (mainEx01.c) Para análise detalhada:
-> `valgrind --leak-check=full ./mainEx01 mat_a3x4.example mat_b4x3.example`
-
-Será apresentado em tela:
-```
-==20893== Memcheck, a memory error detector
-==20893== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==20893== Using Valgrind-3.13.0 and LibVEX; rerun with -h for copyright info
-==20893== Command: ./mainEx01 mat_a3x4.example mat_b4x3.example
-==20893== 
-
- ##### Comparação dos resultados das matrizes #####
-[mat_a vs mat_b]	** Erro: Matrizes tem tamanhos diferentes **
-==20893== 
-==20893== HEAP SUMMARY:
-==20893==     in use at exit: 0 bytes in 0 blocks
-==20893==   total heap usage: 70 allocs, 70 frees, 11,301 bytes allocated
-==20893== 
-==20893== All heap blocks were freed -- no leaks are possible
-==20893== 
-==20893== For counts of detected and suppressed errors, rerun with: -v
-==20893== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 ```

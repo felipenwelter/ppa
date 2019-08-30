@@ -1,4 +1,5 @@
 #include "matrizv3.h"
+#include "toolsv3.h"
 
 /*
 function malocar
@@ -58,11 +59,10 @@ int mgerar(mymatriz *matriz, int valor){
     return (-1);
   }
 
-  /* srand(time(NULL)) inicializa o gerador de números aleatórios com o valor
-  da função time(NULL), que é calculado como sendo o total de segundos passados
-  desde 01/01/70 até hoje. Assim, a cada execução o valor da "semente" será diferente.
+  /* srand(wtime(NULL)) inicializa o gerador de números aleatórios com o valor
+  da função wtime(NULL). Assim, a cada execução o valor da "semente" será diferente.
   */
-  srand(time(NULL));
+  srand(wtime(NULL));
 
   //alimenta matriz com valores
   for (int i = 0; i < matriz->lin; i++){
