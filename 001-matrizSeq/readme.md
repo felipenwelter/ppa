@@ -29,7 +29,7 @@ A implementação do arquivo main.c segue o exemplo disponibilizado no moodle. A
 
 Para gerar os arquivos para execução é necessário executar o comando abaixo no terminal:
 
-Para main.c
+- Para main.c:
 > `make main`
 
 Será apresentado em tela:
@@ -37,7 +37,7 @@ Será apresentado em tela:
 gcc -Wall -O3 matrizv3.o toolsv3.o main.c -o main 
 ```
 
-Para mainEx01.c:
+- Para mainEx01.c:
 > `make mainEx01`
 
 Será apresentado em tela:
@@ -49,7 +49,7 @@ gcc -Wall -O3 matrizv3.o toolsv3.o mainEx01.c -o mainEx01
 
 Para executar os arquivos gerados basta executar o comando abaixo (desde que esteja no mesmo diretório):
 
-Para main.c:
+- Para main.c:
 > `./main`
 
 Será apresentado em tela:
@@ -91,7 +91,7 @@ Será apresentado em tela:
 9:	[52]	[28]	[17]	[89]	[10]	[7]	[86]	[95]	[14]	[85]	
 ```
 
-Para mainEx01.c:
+- Para mainEx01.c:
 > `./mainEx01 mat_a3x4.example mat_b4x3.example`
 
 Será apresentado em tela:
@@ -107,7 +107,7 @@ A mensagem acima é apresentada porque as matrizes tem tamanhos diferentes e nã
 
 Para realizar uma análise dinâmica do código e verificar eventuais problemas, deve-se previamente ter instalado o programa *valgrind* e executar o comando abaixo:
 
-Para análise simplificada:
+- (main.c) Para análise simplificada:
 > `valgrind ./main`
 
 Será apresentado em tela:
@@ -131,7 +131,7 @@ Será apresentado em tela:
 ==20635== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 ```
 
-Para análise detalhada:
+- (main.c) Para análise detalhada:
 > `valgrind --leak-check=full ./main`
 
 Será apresentado em tela:
@@ -155,8 +155,7 @@ Será apresentado em tela:
 ==20845== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 ```
 
-
-Para análise simplificada:
+- (mainEx01.c) Para análise simplificada:
 > `valgrind ./mainEx01 mat_a3x4.example mat_b4x3.example`
 
 Será apresentado em tela:
@@ -180,7 +179,7 @@ Será apresentado em tela:
 ==20862== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 ```
 
-Para análise detalhada:
+- (mainEx01.c) Para análise detalhada:
 > `valgrind --leak-check=full ./mainEx01 mat_a3x4.example mat_b4x3.example`
 
 Será apresentado em tela:
