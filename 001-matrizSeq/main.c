@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
 	mat_a.matriz = NULL;
 	mat_a.lin = N;
 	mat_a.col = M;
-
+    
     //aloca memória para matriz
     if (malocar(&mat_a)) {
         printf ("Error..\n");

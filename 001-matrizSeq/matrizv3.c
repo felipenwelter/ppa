@@ -47,7 +47,6 @@ Inicializa matriz com valores
 @param matriz, ponteiro para objeto do tipo mymatriz
 @param valor, indica regra para preenchimento da matriz, sendo:
               -9999: preenche com valores aleatórios
-              0: preenche com zeros
               outro valor: preenche com zero
 */
 int mgerar(mymatriz *matriz, int valor){
@@ -71,9 +70,6 @@ int mgerar(mymatriz *matriz, int valor){
       switch(valor){
       case -9999:
         value = rand() % 100;
-        break;
-      case 0:
-        value = 0;
         break;
       default:
         value = 0;
@@ -184,7 +180,6 @@ int mcomparar (mymatriz *mat_a, mymatriz *mat_b){
     return (-1);
   }
 
-mat_b->matriz[0][1] = 30;
   for (int i = 0; i < mat_a->lin; i++){
     for (int j = 0; j < mat_a->col; j++){
       if ( mat_a->matriz[i][j] != mat_b->matriz[i][j] ){

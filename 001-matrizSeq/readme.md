@@ -34,7 +34,7 @@ Para gerar os arquivos para execução é necessário executar o comando abaixo 
 
 Será apresentado em tela:
 ```
-gcc -Wall -O3 matrizv3.o toolsv3.o main.c -o main 
+gcc -Wall -O3 matrizv3.o toolsv3.o main.c -o main
 ```
 
 - Para mainEx01.c:
@@ -147,7 +147,7 @@ Será apresentado em tela:
 ==20862== 
 ==20862== HEAP SUMMARY:
 ==20862==     in use at exit: 0 bytes in 0 blocks
-==20862==   total heap usage: 67 allocs, 67 frees, 11,280 bytes allocated
+==20862==   total heap usage: 70 allocs, 70 frees, 11,301 bytes allocated
 ==20862== 
 ==20862== All heap blocks were freed -- no leaks are possible
 ==20862== 
