@@ -72,8 +72,8 @@ int main(int argc, char *argv[]) {
 		start_time = wtime();
 		mat_soma[ii] = msomar(&mat_a, &mat_a, ii);
 		end_time = wtime();
-		mimprimir(mat_soma[ii]);
-		printf("\tRuntime: %f\n", end_time - start_time);
+	//	mimprimir(mat_soma[ii]);
+	//	printf("\tRuntime: %f\n", end_time - start_time);
 		sprintf(filename, "soma_t%d.result", ii);
 		fmat = fopen(filename,"w");
 		fileout_matriz(mat_soma[ii], fmat);
