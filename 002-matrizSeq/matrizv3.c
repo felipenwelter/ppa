@@ -148,12 +148,15 @@ Libera a memória alocada para a matriz
 */
 int mliberar (mymatriz *matriz){
 
+  printf("mliberar called for %p\n", &matriz);
   if (matriz != NULL){
     //libera a alocação de cada linha
     for (int i = 0; i < matriz->lin; i++){
         free(matriz->matriz[i]);
     }
     free(matriz->matriz);
+  }else{
+    printf("liberou com sucesso o endereço %p\n", &matriz);
   }
   
   return (0);
