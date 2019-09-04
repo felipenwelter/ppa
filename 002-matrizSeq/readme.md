@@ -46,6 +46,32 @@ gcc -Wall -O3 matrizv3.o toolsv3.o mainEx01.c -o mainEx01
 
 Para executar os arquivos gerados basta executar o comando abaixo (desde que esteja no mesmo diretório):
 
+- Para gmat.c:
+> `./gmat <lin> <col>`
+
+Será apresentado em tela:
+```
+	#0	#1	#2	#3	#4	
+0:	[84]	[44]	[69]	[28]	[45]	
+1:	[47]	[46]	[34]	[29]	[38]	
+2:	[10]	[2]	[25]	[94]	[72]	
+3:	[56]	[87]	[34]	[98]	[27]	
+4:	[31]	[73]	[9]	[83]	[79]	
+
+		**** PRINT mat_c NxM(5,5) **** 
+#####
+ Arquivo com a matriz gerada (5x5-mat.map).
+#####
+	#0	#1	#2	#3	#4	
+0:	[84]	[44]	[69]	[28]	[45]	
+1:	[47]	[46]	[34]	[29]	[38]	
+2:	[10]	[2]	[25]	[94]	[72]	
+3:	[56]	[87]	[34]	[98]	[27]	
+4:	[31]	[73]	[9]	[83]	[79]	
+
+##### Arquivo 5x5-mat.map: VERIFICADO! #####
+```
+
 - Para main.c:
 > `./main`
 
@@ -100,7 +126,7 @@ Será apresentado em tela:
 A mensagem acima é apresentada porque as matrizes tem tamanhos diferentes e não podem ser comparadas. Caso a chamada seja feita com matrizes do mesmo tamanho será impresso se são iguais ou diferentes.
 
 - Para mainEx02.c:
-> `./mainEx02 mat_a3x4.example mat_b4x3.example`
+> `./mainEx02 5x5-mat.map 5x5-mat.map`
 
 Será apresentado em tela:
 ```
@@ -163,7 +189,7 @@ Será apresentado em tela:
 ```
 
 - Para mainEx02.c:
-> `valgrind ./mainEx02 mat_a3x4.example mat_b4x3.example`
+> `valgrind ./mainEx02 5x5-mat.map 5x5-mat.map`
 
 Será apresentado em tela:
 ```
