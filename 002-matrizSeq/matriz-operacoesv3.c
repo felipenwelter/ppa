@@ -3,12 +3,33 @@
 
 mymatriz res; //auxiliar, grava resultado da soma
 
-//As matrizes envolvidas na adição devem ser da mesma ordem, quer dizer, devem ter o mesmo
-//número de linhas e colunas. A matriz resultante terá a mesma configuração.
-
+/*
+function msomar
+Realiza operação para duas matrizes.
+As matrizes envolvidas na adição devem ser da mesma ordem, quer dizer, devem ter o mesmo
+número de linhas e colunas. A matriz resultante terá a mesma configuração.
+@return res, ponteiro para a matriz resultante
+@param mat_a, ponteiro para objeto do tipo mymatriz
+@param mat_b, ponteiro para objeto do tipo mymatriz
+@param tipo, inteiro que define a ordem de aninhamento dos loops:
+             - 0 para ij
+             - 1 para ji
+*/
 mymatriz *msomar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
 
     int i_max, j_max; //auxiliares para controle de aninhamento
+
+    //verifica se foi alocado memória para a matriz
+    if ( (mat_a == NULL) || (mat_b == NULL)) {
+        printf ("** Erro: Memoria Insuficiente **\n");
+        return NULL;
+    }
+
+    //valida se matrizes tem tamanhos compatíveis
+    if (mat_a->col != mat_b->col || mat_a->lin != mat_b->lin ){
+        printf ("** Erro: Matrizes devem ter mesma configuração para que se possa somar. **\n");
+        return NULL;
+    }
 
     //matriz resultado
 	res.matriz = NULL;
@@ -51,18 +72,44 @@ mymatriz *msomar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
             
         }
     }
-    printf(" in msomar returned the address %p\n", &res);
+
     return &res;
 }
 
 
-//As matrizes envolvidas na adição devem ser da mesma ordem, quer dizer, devem ter o mesmo
-//número de linhas e colunas. A matriz resultante terá a mesma configuração.
+/*
+function msomar
+Realiza operação para duas matrizes.
+As matrizes envolvidas na multiplicação devem seguir a regra: número de colunas da primeira
+matriz deve ser igual ao número de linhas da segunda matriz. A matriz resultante será configurada
+tendo o número de linhas da primeira e o número de colunas da segunda. Ex: 3x4 * 4x3 = 3x3
+@return res, ponteiro para a matriz resultante
+@param mat_a, ponteiro para objeto do tipo mymatriz
+@param mat_b, ponteiro para objeto do tipo mymatriz
+@param tipo, inteiro que define a ordem de aninhamento dos loops:
+             - 0 para ijk
+             - 1 para ikj
+             - 2 para kij
+             - 3 para kji
+             - 4 para jik
+             - 5 para jki
 
-
+*/
 mymatriz *mmultiplicar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
 
     int i_max, j_max, k_max; //auxiliares para controle de aninhamento
+
+    //verifica se foi alocado memória para a matriz
+    if ( (mat_a == NULL) || (mat_b == NULL)) {
+        printf ("** Erro: Memoria Insuficiente **\n");
+        return NULL;
+    }
+
+    //valida se matrizes tem tamanhos compatíveis
+    if (mat_a->col != mat_b->lin ){
+        printf ("** Erro: Matrizes devem ter mesma configuração para que se possa somar. **\n");
+        return NULL;
+    }
 
     //matriz resultado
 	res.matriz = NULL;
@@ -76,39 +123,127 @@ mymatriz *mmultiplicar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
         mzerar(&res);
     }
 
-    //define aninhamento, conforme parametro tipo
     i_max = mat_a->lin;
     j_max = mat_b->col;
-    k_max = mat_b->lin;
-    if (tipo == 1){ //tipo = 1: ordem de aninhamento jik
-        i_max = mat_b->col;
-        j_max = mat_a->lin;
-        k_max = mat_a->col;
-    }
+    k_max = mat_a->col; //ou mat_b->lin
 
-    //realiza a multiplicacao dos elementos da matriz a e b
-    for (int i = 0; i < i_max; i++){
-        for (int j = 0; j < j_max; j++){
+    //define aninhamento, conforme parametro tipo
+    switch(tipo){
+        case 0: //ijk
+            /*for (int i = 0; i < i_max; i++){
+                for (int j = 0; j < j_max; j++){
+                    for (int k = 0; k < k_max; k++){
+                        res.matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
+                        //printf("a[%d][%d] = %d\n", i, k, mat_a->matriz[i][k] );
+                        //printf("b[%d][%d] = %d\n", k, j, mat_b->matriz[k][j] );
+                        //printf("%d x %d = %d (%d)\n", mat_a->matriz[i][k], mat_b->matriz[k][j], mat_a->matriz[i][k] * mat_b->matriz[k][j], res.matriz[i][j]);
+                    }
+                }
+            }*/
+            i_max = mat_a->lin;
+            j_max = mat_b->col;
+            k_max = mat_a->col; //ou mat_b->lin
+            break;
 
-            int temp = 0;
-            for (int k = 0; k < k_max; k++){
+        case 1: //ikj
+            /*for (int i = 0; i < i_max; i++){
+                for (int k = 0; k < k_max; k++){
+                    for (int j = 0; j < j_max; j++){
+                        res.matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
+                    }
+                }
+            }*/
+            i_max = mat_a->lin;
+            j_max = mat_a->col; //ou mat_b->lin
+            k_max = mat_b->col;
+            break;
 
-                temp += mat_a->matriz[i][k] * mat_b->matriz[k][j];
-                //printf("a[%d][%d] = %d\n", i, k, mat_a->matriz[i][k] );
-                //printf("b[%d][%d] = %d\n", k, i, mat_b->matriz[k][j] );
-                //printf("%d x %d = %d (%d)\n", mat_a->matriz[i][k], mat_b->matriz[k][j], mat_a->matriz[i][k] * mat_b->matriz[k][j], temp);
+        case 2: //kij
+            /*for (int k = 0; k < k_max; k++){
+                for (int i = 0; i < i_max; i++){
+                    for (int j = 0; j < j_max; j++){
+                        res.matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
+                    }
+                }
+            }*/
+            i_max = mat_a->col; //ou mat_b->lin
+            j_max = mat_a->lin;
+            k_max = mat_b->col;
+            break;
 
-            }
+        case 3: //kji
+            /*for (int k = 0; k < k_max; k++){
+                for (int i = 0; i < i_max; i++){        
+                    for (int j = 0; j < j_max; j++){
+                        res.matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
+                    }
+                }
+            }*/
+            i_max = mat_a->col; //ou mat_b->lin
+            j_max = mat_b->col;
+            k_max = mat_a->lin;
+            break;
 
-            res.matriz[i][j] = temp;
-            //printf("r[%d][%d] = %d \n\n", i, j, res.matriz[i][j]);
+        case 4: //jik
+            /*for (int j = 0; j < j_max; j++){
+                for (int i = 0; i < i_max; i++){
+                    for (int k = 0; k < k_max; k++){            
+                        res.matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
+                    }
+                }
+            }*/
+            i_max = mat_b->col;
+            j_max = mat_a->lin;
+            k_max = mat_a->col; //ou mat_b->lin
+            break;
+
+        default: //jki
+            /*for (int j = 0; j < j_max; j++){
+                for (int k = 0; k < k_max; k++){
+                    for (int i = 0; i < i_max; i++){
+                        res.matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
+                    }
+                }
+            }*/
+            i_max = mat_b->col;
+            j_max = mat_a->col; //ou mat_b->lin
+            k_max = mat_a->lin;
+            break;
             
-        }
     }
+
+        for (int i = 0; i < i_max; i++){
+            for (int j = 0; j < j_max; j++){
+                for (int k = 0; k < k_max; k++){
+
+                    switch(tipo){
+                        case 0: //ijk
+                            res.matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
+                            break;
+                        case 1: //ikj
+                            res.matriz[i][k] += mat_a->matriz[i][j] * mat_b->matriz[j][k];
+                            break;
+                        case 2: //kij
+                            res.matriz[k][i] += mat_a->matriz[k][j] * mat_b->matriz[j][i];
+                            break;
+                        case 3: //kji
+                            res.matriz[k][j] += mat_a->matriz[k][i] * mat_b->matriz[i][j];
+                            break;
+                        case 4: //jik
+                            res.matriz[j][i] += mat_a->matriz[j][k] * mat_b->matriz[k][i];
+                            break;
+                        default: //jki
+                            res.matriz[j][k] += mat_a->matriz[j][i] * mat_b->matriz[i][k];
+                            break;
+                    }
+
+                    //res.matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
+                    //printf("a[%d][%d] = %d\n", i, k, mat_a->matriz[i][k] );
+                    //printf("b[%d][%d] = %d\n", k, j, mat_b->matriz[k][j] );
+                    //printf("%d x %d = %d (%d)\n", mat_a->matriz[i][k], mat_b->matriz[k][j], mat_a->matriz[i][k] * mat_b->matriz[k][j], res.matriz[i][j]);
+                }
+            }
+        }
 
     return &res;
 }
-
-
-//TODO - COMMENTS
-//TODO - validar tamanho das matrizes enviadas por parametro, se pode somar e multiplicar mesmo

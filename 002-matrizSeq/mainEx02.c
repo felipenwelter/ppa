@@ -68,15 +68,10 @@ int main(int argc, char *argv[]) {
 	//                 Operações de Adição
 	mat_soma = (mymatriz **) calloc (2,sizeof(mymatriz *));
 
-	printf(" endereço de mat_soma = %p\n\n", &mat_soma);
-	printf(" endereço de mat_soma[0.] = %p\n\n", &mat_soma[0]);
-	printf(" endereço de mat_soma[1.] = %p\n\n", &mat_soma[1]);
-
 	for (int ii=0; ii < 2; ii++) {
 		printf("\n ##### somar_t%d de Matrizes #####\n", ii);
 		start_time = wtime();
 		mat_soma[ii] = msomar(&mat_a, &mat_a, ii);
-		printf(" endereço de mat_soma[%d] = %p e %p\n\n", ii, &mat_soma[ii], mat_soma+ii);
 		end_time = wtime();
 		mimprimir(mat_soma[ii]);
 		printf("\tRuntime: %f\n", end_time - start_time);
@@ -85,6 +80,9 @@ int main(int argc, char *argv[]) {
 		fileout_matriz(mat_soma[ii], fmat);
 		fclose(fmat);
 	}
+
+	mimprimir(mat_soma[0]);
+	mimprimir(mat_soma[1]);
 
 	// %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -123,8 +121,6 @@ int main(int argc, char *argv[]) {
 	// %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
 	//                   Liberação de memória
 	for (int ii=0; ii < 2; ii++) {
-
-	printf(" calling mliberar: endereço de mat_soma[%d] = %p e %p\n\n", ii, &mat_soma[ii], mat_soma[ii]);
 		mliberar(mat_soma[ii]);
 		free (mat_soma[ii]);
 	}
