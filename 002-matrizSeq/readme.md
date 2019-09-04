@@ -2,22 +2,23 @@
 
 ## Objetivo:
 - Implementar uma biblioteca de manipulação de matrizes de inteiro em C.
+- Implementar uma biblioteca com as operações de soma e multiplicação de matrizes.
 
 
 ## Arquivos:
 
-A implementação do arquivo main.c segue o exemplo disponibilizado no moodle. A implementação de mainEx01 também segue a estrutura original.
+A implementação do arquivo main.c segue o exemplo disponibilizado no moodle. A implementação de mainEx01 e mainEx02 também segue a estrutura original.
 
 [BIBLIOTECAS IMPLEMENTADAS]
 - **matrizv3.h**: headers das funções de gerência de matrizes;
 - **matrizv3.c**: funções para manipular matrizes;
 - **matriz-operacoesv3.h**: headers das funções de operações de matrizes que devem ser implementadas;
-- **matriz-operacoesv3.c**: ainda não implementado;
+- **matriz-operacoesv3.c**: funções para operações de matrizes;
 
 [ARQUIVOS PARA EXECUÇÃO]
 - **main.c**: código para teste simplificado da biblioteca de matrizes, seguindo a estrutura do moodle;
-- **mainEx01.c**: exercício 01, que realiza a leitura de uma matriz de arquivo e exetuca as operações disponíveis na biblioteca de matrizes. Segue implementação original disponibilizada pelo professor;
-- **mainEx02.c**: exercício 02, ainda não implementado;
+- **mainEx01.c**: exercício 01, que realiza a leitura de uma matriz de arquivo e executa as operações disponíveis na biblioteca de matrizes. Segue implementação original disponibilizada pelo professor;
+- **mainEx02.c**: exercício 02, que realiza a soma e multiplicação de matrizes/
 
 [ARQUIVOS AUXILIARES]
 - **mat_a3x4.example** e **mat_b4x3.example**: matrizes exemplos A (3x4) e B(4x3);
@@ -29,20 +30,16 @@ A implementação do arquivo main.c segue o exemplo disponibilizado no moodle. A
 
 Para gerar os arquivos para execução é necessário executar o comando abaixo no terminal:
 
-- Para main.c:
-> `make main`
+> `make`
 
 Será apresentado em tela:
 ```
-gcc -Wall -O3 matrizv3.o toolsv3.o main.c -o main
-```
+gcc -Wall -O3 matriz-operacoesv3.o matrizv3.o toolsv3.o mainEx02.c -o mainEx02 
+gcc -Wall -O3 matrizv3.o toolsv3.o gera_matrizv3.c -o gmat 
+gcc -Wall -O3 matrizv3.o toolsv3.o mainEx01.c -o mainEx01 
 
-- Para mainEx01.c:
-> `make mainEx01`
-
-Será apresentado em tela:
-```
-gcc -Wall -O3 matrizv3.o toolsv3.o mainEx01.c -o mainEx01
+####### Exemplo de Execução #######
+./mainEx01 mat_a3x4.example mat_b4x3.example
 ```
 
 ## Execução:
@@ -102,6 +99,16 @@ Será apresentado em tela:
 
 A mensagem acima é apresentada porque as matrizes tem tamanhos diferentes e não podem ser comparadas. Caso a chamada seja feita com matrizes do mesmo tamanho será impresso se são iguais ou diferentes.
 
+- Para mainEx02.c:
+> `./mainEx02 mat_a3x4.example mat_b4x3.example`
+
+Será apresentado em tela:
+```
+
+```
+
+
+
 
 ## Análise dinâmica:
 
@@ -153,4 +160,12 @@ Será apresentado em tela:
 ==20862== 
 ==20862== For counts of detected and suppressed errors, rerun with: -v
 ==20862== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+```
+
+- Para mainEx02.c:
+> `valgrind ./mainEx02 mat_a3x4.example mat_b4x3.example`
+
+Será apresentado em tela:
+```
+
 ```

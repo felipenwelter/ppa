@@ -123,6 +123,7 @@ mymatriz *mmultiplicar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
         mzerar(&res);
     }
 
+    //inicializa variáveis de controle dos for`s
     i_max = mat_a->lin;
     j_max = mat_b->col;
     k_max = mat_a->col; //ou mat_b->lin
@@ -130,7 +131,7 @@ mymatriz *mmultiplicar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
     //define aninhamento, conforme parametro tipo
     switch(tipo){
         case 0: //ijk
-            /*for (int i = 0; i < i_max; i++){
+            for (int i = 0; i < i_max; i++){
                 for (int j = 0; j < j_max; j++){
                     for (int k = 0; k < k_max; k++){
                         res.matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
@@ -139,75 +140,57 @@ mymatriz *mmultiplicar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
                         //printf("%d x %d = %d (%d)\n", mat_a->matriz[i][k], mat_b->matriz[k][j], mat_a->matriz[i][k] * mat_b->matriz[k][j], res.matriz[i][j]);
                     }
                 }
-            }*/
-            i_max = mat_a->lin;
-            j_max = mat_b->col;
-            k_max = mat_a->col; //ou mat_b->lin
+            }
             break;
 
         case 1: //ikj
-            /*for (int i = 0; i < i_max; i++){
+            for (int i = 0; i < i_max; i++){
                 for (int k = 0; k < k_max; k++){
                     for (int j = 0; j < j_max; j++){
                         res.matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
                     }
                 }
-            }*/
-            i_max = mat_a->lin;
-            j_max = mat_a->col; //ou mat_b->lin
-            k_max = mat_b->col;
+            }
             break;
 
         case 2: //kij
-            /*for (int k = 0; k < k_max; k++){
+            for (int k = 0; k < k_max; k++){
                 for (int i = 0; i < i_max; i++){
                     for (int j = 0; j < j_max; j++){
                         res.matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
                     }
                 }
-            }*/
-            i_max = mat_a->col; //ou mat_b->lin
-            j_max = mat_a->lin;
-            k_max = mat_b->col;
+            }
             break;
 
         case 3: //kji
-            /*for (int k = 0; k < k_max; k++){
+            for (int k = 0; k < k_max; k++){
                 for (int i = 0; i < i_max; i++){        
                     for (int j = 0; j < j_max; j++){
                         res.matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
                     }
                 }
-            }*/
-            i_max = mat_a->col; //ou mat_b->lin
-            j_max = mat_b->col;
-            k_max = mat_a->lin;
+            }
             break;
 
         case 4: //jik
-            /*for (int j = 0; j < j_max; j++){
+            for (int j = 0; j < j_max; j++){
                 for (int i = 0; i < i_max; i++){
                     for (int k = 0; k < k_max; k++){            
                         res.matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
                     }
                 }
-            }*/
-            i_max = mat_b->col;
-            j_max = mat_a->lin;
-            k_max = mat_a->col; //ou mat_b->lin
+            }
             break;
 
         default: //jki
-            /*for (int j = 0; j < j_max; j++){
+            for (int j = 0; j < j_max; j++){
                 for (int k = 0; k < k_max; k++){
                     for (int i = 0; i < i_max; i++){
                         res.matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
                     }
                 }
-            }*/
-            i_max = mat_b->col;
-            j_max = mat_a->col; //ou mat_b->lin
-            k_max = mat_a->lin;
+            }
             break;
             
     }
@@ -215,29 +198,7 @@ mymatriz *mmultiplicar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
         for (int i = 0; i < i_max; i++){
             for (int j = 0; j < j_max; j++){
                 for (int k = 0; k < k_max; k++){
-
-                    switch(tipo){
-                        case 0: //ijk
-                            res.matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
-                            break;
-                        case 1: //ikj
-                            res.matriz[i][k] += mat_a->matriz[i][j] * mat_b->matriz[j][k];
-                            break;
-                        case 2: //kij
-                            res.matriz[k][i] += mat_a->matriz[k][j] * mat_b->matriz[j][i];
-                            break;
-                        case 3: //kji
-                            res.matriz[k][j] += mat_a->matriz[k][i] * mat_b->matriz[i][j];
-                            break;
-                        case 4: //jik
-                            res.matriz[j][i] += mat_a->matriz[j][k] * mat_b->matriz[k][i];
-                            break;
-                        default: //jki
-                            res.matriz[j][k] += mat_a->matriz[j][i] * mat_b->matriz[i][k];
-                            break;
-                    }
-
-                    //res.matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
+                    res.matriz[i][j] += mat_a->matriz[i][k] * mat_b->matriz[k][j];
                     //printf("a[%d][%d] = %d\n", i, k, mat_a->matriz[i][k] );
                     //printf("b[%d][%d] = %d\n", k, j, mat_b->matriz[k][j] );
                     //printf("%d x %d = %d (%d)\n", mat_a->matriz[i][k], mat_b->matriz[k][j], mat_a->matriz[i][k] * mat_b->matriz[k][j], res.matriz[i][j]);
