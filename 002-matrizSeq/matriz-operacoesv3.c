@@ -72,7 +72,7 @@ mymatriz *msomar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
             
         }
     }
-
+res.matriz[0][0] = tipo+100; //TODO 3de3
     return &res;
 }
 
