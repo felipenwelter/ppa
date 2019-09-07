@@ -80,8 +80,7 @@ int main(int argc, char *argv[]) {
 		fclose(fmat);
 	}
 	// %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
-mimprimir(mat_soma[0]); //TODO 1de3
-mimprimir(mat_soma[1]); //TODO 2de3
+	
 	printf("\n%%%%%%%%%%%%%%%%\n");
 
 	// %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
