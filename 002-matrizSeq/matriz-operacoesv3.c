@@ -38,8 +38,9 @@ mymatriz *msomar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
 
     //realiza a alocação de memória para matriz resultado
     if (malocar(&res)) {
-		printf ("ERROR: Out of memory\n");
-	}else{
+	printf ("ERROR: Out of memory\n");
+	exit(1);
+    }else{
         mzerar(&res);
     }
 
@@ -72,14 +73,14 @@ mymatriz *msomar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
             
         }
     }
-res.matriz[0][0] = tipo+100; //TODO 3de3
+    
     return &res;
 }
 
 
 /*
-function msomar
-Realiza operação para duas matrizes.
+function mmultiplicar
+Realiza operação de multiplicação para duas matrizes.
 As matrizes envolvidas na multiplicação devem seguir a regra: número de colunas da primeira
 matriz deve ser igual ao número de linhas da segunda matriz. A matriz resultante será configurada
 tendo o número de linhas da primeira e o número de colunas da segunda. Ex: 3x4 * 4x3 = 3x3
@@ -119,6 +120,7 @@ mymatriz *mmultiplicar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
     //realiza a alocação de memória para matriz resultado
     if (malocar(&res)) {
 		printf ("ERROR: Out of memory\n");
+	        exit(1);
 	}else{
         mzerar(&res);
     }
