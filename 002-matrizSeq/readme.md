@@ -131,6 +131,97 @@ A mensagem acima é apresentada porque as matrizes tem tamanhos diferentes e nã
 Será apresentado em tela:
 ```
 
+ ##### somar_t0 de Matrizes #####
+        #0      #1      #2      #3      #4
+0:      [4]     [2]     [6]     [14]    [6]
+1:      [4]     [4]     [4]     [14]    [0]
+2:      [16]    [12]    [8]     [4]     [14]
+3:      [8]     [10]    [18]    [6]     [2]
+4:      [4]     [14]    [6]     [8]     [0]
+
+        Runtime: 0.000004
+
+ ##### somar_t1 de Matrizes #####
+        #0      #1      #2      #3      #4
+0:      [4]     [2]     [6]     [14]    [6]
+1:      [4]     [4]     [4]     [14]    [0]
+2:      [16]    [12]    [8]     [4]     [14]
+3:      [8]     [10]    [18]    [6]     [2]
+4:      [4]     [14]    [6]     [8]     [0]
+
+        Runtime: 0.000004
+
+%%%%%%%%
+
+ ##### multiplicar_t0 de Matrizes #####
+        #0      #1      #2      #3      #4
+0:      [128]   [156]   [184]   [120]   [68]
+1:      [104]   [106]   [162]   [106]   [54]
+2:      [164]   [206]   [182]   [280]   [108]
+3:      [208]   [180]   [176]   [188]   [156]
+4:      [116]   [108]   [136]   [162]   [62]
+
+        Runtime: 0.000005
+
+ ##### multiplicar_t1 de Matrizes #####
+        #0      #1      #2      #3      #4
+0:      [128]   [156]   [184]   [120]   [68]
+1:      [104]   [106]   [162]   [106]   [54]
+2:      [164]   [206]   [182]   [280]   [108]
+3:      [208]   [180]   [176]   [188]   [156]
+4:      [116]   [108]   [136]   [162]   [62]
+
+        Runtime: 0.000004
+
+ ##### multiplicar_t2 de Matrizes #####
+        #0      #1      #2      #3      #4
+0:      [128]   [156]   [184]   [120]   [68]
+1:      [104]   [106]   [162]   [106]   [54]
+2:      [164]   [206]   [182]   [280]   [108]
+3:      [208]   [180]   [176]   [188]   [156]
+4:      [116]   [108]   [136]   [162]   [62]
+
+        Runtime: 0.000004
+
+ ##### multiplicar_t3 de Matrizes #####
+        #0      #1      #2      #3      #4
+0:      [128]   [156]   [184]   [120]   [68]
+1:      [104]   [106]   [162]   [106]   [54]
+2:      [164]   [206]   [182]   [280]   [108]
+3:      [208]   [180]   [176]   [188]   [156]
+4:      [116]   [108]   [136]   [162]   [62]
+
+        Runtime: 0.000003
+
+ ##### multiplicar_t4 de Matrizes #####
+        #0      #1      #2      #3      #4
+0:      [128]   [156]   [184]   [120]   [68]
+1:      [104]   [106]   [162]   [106]   [54]
+2:      [164]   [206]   [182]   [280]   [108]
+3:      [208]   [180]   [176]   [188]   [156]
+4:      [116]   [108]   [136]   [162]   [62]
+
+        Runtime: 0.000003
+
+ ##### multiplicar_t5 de Matrizes #####
+        #0      #1      #2      #3      #4
+0:      [128]   [156]   [184]   [120]   [68]
+1:      [104]   [106]   [162]   [106]   [54]
+2:      [164]   [206]   [182]   [280]   [108]
+3:      [208]   [180]   [176]   [188]   [156]
+4:      [116]   [108]   [136]   [162]   [62]
+
+        Runtime: 0.000003
+
+ ##### Comparação dos resultados da adição de matrizes #####
+[soma_t0 vs soma_t1]    ** Matrizes são iguais **
+
+ ##### Comparação dos resultados da Multiplicação de matrizes #####
+[mult_t0 vs mult_t1]    ** Matrizes são iguais **
+[mult_t0 vs mult_t2]    ** Matrizes são iguais **
+[mult_t0 vs mult_t3]    ** Matrizes são iguais **
+[mult_t0 vs mult_t4]    ** Matrizes são iguais **
+[mult_t0 vs mult_t5]    ** Matrizes são iguais **
 ```
 
 
@@ -193,5 +284,110 @@ Será apresentado em tela:
 
 Será apresentado em tela:
 ```
+==13473== Memcheck, a memory error detector
+==13473== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==13473== Using Valgrind-3.13.0 and LibVEX; rerun with -h for copyright info
+==13473== Command: ./mainEx02 5x5-mat.map 5x5-mat.map
+==13473== 
 
+ ##### somar_t0 de Matrizes #####
+        #0      #1      #2      #3      #4
+0:      [4]     [2]     [6]     [14]    [6]
+1:      [4]     [4]     [4]     [14]    [0]
+2:      [16]    [12]    [8]     [4]     [14]
+3:      [8]     [10]    [18]    [6]     [2]
+4:      [4]     [14]    [6]     [8]     [0]
+
+        Runtime: 0.004757
+
+ ##### somar_t1 de Matrizes #####
+        #0      #1      #2      #3      #4
+0:      [4]     [2]     [6]     [14]    [6]
+1:      [4]     [4]     [4]     [14]    [0]
+2:      [16]    [12]    [8]     [4]     [14]
+3:      [8]     [10]    [18]    [6]     [2]
+4:      [4]     [14]    [6]     [8]     [0]
+
+        Runtime: 0.000787
+
+%%%%%%%%
+
+ ##### multiplicar_t0 de Matrizes #####
+        #0      #1      #2      #3      #4
+0:      [128]   [156]   [184]   [120]   [68]
+1:      [104]   [106]   [162]   [106]   [54]
+2:      [164]   [206]   [182]   [280]   [108]
+3:      [208]   [180]   [176]   [188]   [156]
+4:      [116]   [108]   [136]   [162]   [62]
+
+        Runtime: 0.009095
+
+ ##### multiplicar_t1 de Matrizes #####
+        #0      #1      #2      #3      #4
+0:      [128]   [156]   [184]   [120]   [68]
+1:      [104]   [106]   [162]   [106]   [54]
+2:      [164]   [206]   [182]   [280]   [108]
+3:      [208]   [180]   [176]   [188]   [156]
+4:      [116]   [108]   [136]   [162]   [62]
+
+        Runtime: 0.003601
+
+ ##### multiplicar_t2 de Matrizes #####
+        #0      #1      #2      #3      #4
+0:      [128]   [156]   [184]   [120]   [68]
+1:      [104]   [106]   [162]   [106]   [54]
+2:      [164]   [206]   [182]   [280]   [108]
+3:      [208]   [180]   [176]   [188]   [156]
+4:      [116]   [108]   [136]   [162]   [62]
+
+        Runtime: 0.002786
+
+ ##### multiplicar_t3 de Matrizes #####
+        #0      #1      #2      #3      #4
+0:      [128]   [156]   [184]   [120]   [68]
+1:      [104]   [106]   [162]   [106]   [54]
+2:      [164]   [206]   [182]   [280]   [108]
+3:      [208]   [180]   [176]   [188]   [156]
+4:      [116]   [108]   [136]   [162]   [62]
+
+        Runtime: 0.002810
+
+ ##### multiplicar_t4 de Matrizes #####
+        #0      #1      #2      #3      #4
+0:      [128]   [156]   [184]   [120]   [68]
+1:      [104]   [106]   [162]   [106]   [54]
+2:      [164]   [206]   [182]   [280]   [108]
+3:      [208]   [180]   [176]   [188]   [156]
+4:      [116]   [108]   [136]   [162]   [62]
+
+        Runtime: 0.001898
+
+ ##### multiplicar_t5 de Matrizes #####
+        #0      #1      #2      #3      #4
+0:      [128]   [156]   [184]   [120]   [68]
+1:      [104]   [106]   [162]   [106]   [54]
+2:      [164]   [206]   [182]   [280]   [108]
+3:      [208]   [180]   [176]   [188]   [156]
+4:      [116]   [108]   [136]   [162]   [62]
+
+        Runtime: 0.001875
+
+ ##### Comparação dos resultados da adição de matrizes #####
+[soma_t0 vs soma_t1]    ** Matrizes são iguais **
+
+ ##### Comparação dos resultados da Multiplicação de matrizes #####
+[mult_t0 vs mult_t1]    ** Matrizes são iguais **
+[mult_t0 vs mult_t2]    ** Matrizes são iguais **
+[mult_t0 vs mult_t3]    ** Matrizes são iguais **
+[mult_t0 vs mult_t4]    ** Matrizes são iguais **
+[mult_t0 vs mult_t5]    ** Matrizes são iguais **
+==13473== 
+==13473== HEAP SUMMARY:
+==13473==     in use at exit: 0 bytes in 0 blocks
+==13473==   total heap usage: 179 allocs, 179 frees, 50,536 bytes allocated
+==13473== 
+==13473== All heap blocks were freed -- no leaks are possible
+==13473== 
+==13473== For counts of detected and suppressed errors, rerun with: -v
+==13473== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 ```
