@@ -107,7 +107,7 @@ mymatriz *mmultiplicar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
 
     //valida se matrizes tem tamanhos compatíveis
     if (mat_a->col != mat_b->lin ){
-        printf ("** Erro: Matrizes devem ter mesma configuração para que se possa somar. **\n");
+        printf ("** Erro: Matrizes devem ter mesma configuração para que se possa multiplicar. **\n");
         return NULL;
     }
 
