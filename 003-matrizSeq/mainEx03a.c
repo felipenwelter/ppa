@@ -21,6 +21,9 @@ int main(int argc, char *argv[]) {
 
         matriz_bloco_t *Vsubmat_a = NULL;
         matriz_bloco_t *Vsubmat_b = NULL;
+
+		matriz_bloco_t *Vsubmat_c = NULL;//todo
+
         int nro_submatrizes=2;
 
 	// %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
@@ -92,16 +95,25 @@ int main(int argc, char *argv[]) {
 	printf("\n ##### multiplicar_t1 de Matrizes #####\n");
 	start_time = wtime();
 
-	Vsubmat_a = particionar_matriz (mat_a.matriz, N, La, 1, 2);
-	Vsubmat_b = particionar_matriz (mat_b.matriz, Lb, M, 0, 2);
-	Vsubmat_c = csubmatrizv2 (N, M, nro_submatrizes);
+	printf("mymatriz mat_a \n"); //teste
+	mimprimir(&mat_a); //teste
+	mimprimir(&mat_b); //teste
 
-	mmsubmatriz (Vsubmat_a[0], Vsubmat_b[0], Vsubmat_c[0]);
-	mmsubmatriz (Vsubmat_a[1], Vsubmat_b[1], Vsubmat_c[1]);
-	mmultibloco[0] = msomar(Vsubmat_c[0]->matriz,Vsubmat_c[1]->matriz, 1);
+	Vsubmat_a = particionar_matriz (mat_a.matriz, N, La, 1, 2);
+
+
+
+
+//restore	Vsubmat_b = particionar_matriz (mat_b.matriz, Lb, M, 0, 2);
+
+	//restore    Vsubmat_c = csubmatrizv2 (N, M, nro_submatrizes);
+
+	//restore mmsubmatriz (Vsubmat_a[0], Vsubmat_b[0], Vsubmat_c[0]);
+	//restore mmsubmatriz (Vsubmat_a[1], Vsubmat_b[1], Vsubmat_c[1]);
+	//restore mmultbloco[0] = msomar(Vsubmat_c[0]->matriz,Vsubmat_c[1]->matriz, 1);
 	
 	end_time = wtime();
-	mimprimir(mmultbloco[0]);
+	//restore mimprimir(mmultbloco[0]);
 	printf("\tRuntime: %f\n", end_time - start_time);
 	sprintf(filename, "mult_t1.result");
 	fmat = fopen(filename,"w");
@@ -113,7 +125,7 @@ int main(int argc, char *argv[]) {
 	//              Comparação dos resultados
 	printf("\n ##### Comparação dos resultados da Multiplicação de matrizes #####\n");
 	printf("[mult_t0 vs multbloco_t0]\t");
-	mcomparar (mat_mult[0],mmultbloco[0]);
+	//todo mcomparar (mat_mult[0],mmultbloco[0]);
 	// %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
 	// %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%

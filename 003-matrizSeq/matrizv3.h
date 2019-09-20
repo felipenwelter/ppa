@@ -20,7 +20,7 @@ typedef struct {
 } matriz_bloco_t;
 
 typedef struct {
-  mymatriz *matriz; //int **matriz;
+  int **matriz; //int **matriz; -> teacher changed to mymatriz *matriz;
   int lin;
   int col;
 } mymatriz;

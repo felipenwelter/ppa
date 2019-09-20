@@ -1,7 +1,6 @@
 #include "matrizv3.h"
 #include "toolsv3.h"
 
-
 /*
 function msomar
 Realiza operação para duas matrizes.
@@ -209,3 +208,86 @@ mymatriz *mmultiplicar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
 
     return res;
 }
+
+
+// recebe uma matriz de inteiros e a particiona em n (parâmetro divisor) pedaço de acordo
+// com a orientação (horizontal ou vertical) Onde:
+// divisor é o numero de cortes das matrizes;
+// orientacao é "1" para horizontal e "0" para vertical
+
+matriz_bloco_t **particionar_matriz (int **matriz, int mat_lin, int mat_col, int orientacao, int divisor){
+    
+    matriz_bloco_t **parts = malloc( divisor * sizeof(matriz_bloco_t *));
+    
+    mymatriz **new_matriz;
+    new_matriz = (mymatriz**) calloc( divisor, sizeof(mymatriz * ));
+
+    for (int i = 0; i < divisor; i++){
+        
+        bloco_t *bloco = malloc(sizeof(bloco_t));
+        bloco->col_inicio = 0;
+		bloco->col_fim = mat_col;
+		bloco->lin_inicio = 0;
+		bloco->lin_fim = mat_lin;        
+
+        mymatriz *res = malloc(sizeof(mymatriz));
+        res->matriz = NULL;
+        res->lin = mat_lin;
+        res->col = mat_col;
+        
+
+        //realiza a alocação de memória para matriz resultado
+        if (malocar(res)) {
+            printf ("ERROR: Out of memory\n");
+            exit(1);
+        }else{
+            mzerar(res);
+        }
+        
+        printf("matriz na posicao %d\n", i);
+        printf("res @ %p\n",res);
+        res->matriz[0][0] = 30+i;
+        printf("res->matriz[0][0] @ %d\n",res->matriz[0][0]);
+
+        mimprimir(res);
+
+        //gerar_submatriz(matriz,matrizX,blocoX);
+
+        parts[i] = (matriz_bloco_t*) calloc (1, sizeof(matriz_bloco_t));
+        //parts[i] = (matriz_bloco_t *) malloc(sizeof(matriz_bloco_t));
+        //parts[i]->bloco = bloco;
+        parts[i]->matriz = &res;
+    }
+
+    printf("teste final-----------\n");
+    //mimprimir(parts[0]->matriz);
+    //mimprimir(parts[1]->matriz);
+
+    return parts;
+}
+   
+
+/*
+typedef struct {
+  int lin_inicio;
+  int lin_fim;
+  int col_inicio;
+  int col_fim;
+} bloco_t;
+
+typedef struct {
+  int **matriz;
+  bloco_t *bloco;
+} matriz_bloco_t;
+
+
+typedef struct {
+  int **matriz;
+  int lin;
+  int col;
+} mymatriz;*/
+
+
+
+
+

@@ -34,9 +34,9 @@ int main(int argc, char *argv[]) {
 	}
 	extrai_parametros_matriz(fmat, &N, &La, &vet_line, &nr_line);
 	//return 1;
-	mat_a.matriz = NULL;
-	mat_a.lin = N;
-	mat_a.col = La;
+		mat_a.matriz = NULL;
+		mat_a.lin = N;
+		mat_a.col = La;
 	if (malocar(&mat_a)) {
 		printf ("ERROR: Out of memory\n");
 	}
@@ -98,6 +98,7 @@ int main(int argc, char *argv[]) {
 		fileout_matriz(mat_mult[ii], fmat);
 		fclose(fmat);
 	}
+
 	// %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
 	// %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
