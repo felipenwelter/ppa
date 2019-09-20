@@ -4,7 +4,6 @@
 - Implementar uma biblioteca de manipulação de matrizes de inteiro em C.
 - Implementar uma biblioteca com as operações de soma e multiplicação de matrizes.
 
-
 ## Arquivos:
 
 A implementação do arquivo main.c segue o exemplo disponibilizado no moodle. A implementação de mainEx01 e mainEx02 também segue a estrutura original.
