@@ -211,14 +211,6 @@ mymatriz *mmultiplicar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
 
 
 
-
-
-
-
-
-
-
-
 /*
 function multiplicar_submatriz
 Multiplica a mat_suba pela mat_subb atribuindo o resultado a mat_subc.
@@ -236,18 +228,6 @@ int multiplicar_submatriz(matriz_bloco_t *mat_suba, matriz_bloco_t *mat_subb, ma
         return (-1);
     }
 
-    printf("endereço de mat_subc: %p\n", mat_subc);
-
-    printf("mat_suba->bloco->lin_inicio = %d\n", mat_suba->bloco->lin_inicio);
-    printf("mat_suba->bloco->lin_fim = %d\n", mat_suba->bloco->lin_fim);
-    printf("mat_suba->bloco->col_inicio = %d\n", mat_suba->bloco->col_inicio);
-    printf("mat_suba->bloco->col_fim = %d\n", mat_suba->bloco->col_fim);
-
-    printf("mat_subb->bloco->lin_inicio = %d\n", mat_subb->bloco->lin_inicio);
-    printf("mat_subb->bloco->lin_fim = %d\n", mat_subb->bloco->lin_fim);
-    printf("mat_subb->bloco->col_inicio = %d\n", mat_subb->bloco->col_inicio);
-    printf("mat_subb->bloco->col_fim = %d\n", mat_subb->bloco->col_fim);
-
     for (int i = mat_suba->bloco->lin_inicio; i < mat_suba->bloco->lin_fim; i++)
     {
         for (int j = mat_subb->bloco->col_inicio; j < mat_subb->bloco->col_fim; j++)
@@ -255,14 +235,12 @@ int multiplicar_submatriz(matriz_bloco_t *mat_suba, matriz_bloco_t *mat_subb, ma
             for (int k = mat_suba->bloco->col_inicio; k < mat_suba->bloco->col_fim; k++)
             {
                 mat_subc->matriz->matriz[i][j] += mat_suba->matriz->matriz[i][k] * mat_subb->matriz->matriz[k][j];
-                //printf("mat_subc->matriz->matriz[%d][%d] = %d\n",i,j,mat_subc->matriz->matriz[i][j]);
             }
         }
     }
 
     return 0;
 }
-
 
 /*
 function particionar_matriz
@@ -312,9 +290,8 @@ matriz_bloco_t **particionar_matriz(int **matriz, int mat_lin, int mat_col, int 
 
     if (orientacao == 0)
     {
-        //printf("\norientacao LINHAS (corte horizontal)\n");
         int lin_div = mat_lin / divisor; //tamanho do bloco (linhas)
-        //printf("matriz tem %d linhas e o divisor é %d, então tamanho do bloco = %d\n", mat_lin, divisor, lin_div);
+
         for (int i = 0; i < divisor; i++)
         {
             matriz_bloco[i]->matriz = new_matriz;
@@ -323,25 +300,9 @@ matriz_bloco_t **particionar_matriz(int **matriz, int mat_lin, int mat_col, int 
             matriz_bloco[i]->bloco->col_inicio = 0;
             matriz_bloco[i]->bloco->col_fim = mat_col;
 
-            /*printf("linhas: %d\n", new_matriz->lin);
-            printf("colunas: %d\n", new_matriz->col);
-            //mimprimir(new_matriz);
-            printf("bloco lin_inicio = %d\n", matriz_bloco[i]->bloco->lin_inicio);
-            printf("bloco lin_fim = %d\n", matriz_bloco[i]->bloco->lin_fim);
-            printf("bloco col_inicio = %d\n", matriz_bloco[i]->bloco->col_inicio);
-            printf("bloco col_fim = %d\n\n", matriz_bloco[i]->bloco->col_fim);*/
-
         }
         //ajusta último bloco para abranger as linhas restantes
         matriz_bloco[divisor - 1]->bloco->lin_fim = mat_lin;
-
-        /*printf("ADJUSTED-----\nlinhas: %d\n", new_matriz->lin);
-        printf("colunas: %d\n", new_matriz->col);
-        //mimprimir(new_matriz);
-        printf("bloco lin_inicio = %d\n", matriz_bloco[divisor-1]->bloco->lin_inicio);
-        printf("bloco lin_fim = %d\n", matriz_bloco[divisor-1]->bloco->lin_fim);
-        printf("bloco col_inicio = %d\n", matriz_bloco[divisor-1]->bloco->col_inicio);
-        printf("bloco col_fim = %d\n", matriz_bloco[divisor-1]->bloco->col_fim);*/
 
     }
     else
@@ -355,34 +316,18 @@ matriz_bloco_t **particionar_matriz(int **matriz, int mat_lin, int mat_col, int 
             matriz_bloco[i]->bloco->lin_fim = mat_lin;
             matriz_bloco[i]->bloco->col_inicio = i * lin_div;
             matriz_bloco[i]->bloco->col_fim = (i + 1) * lin_div;
-
-           /* printf("linhas: %d\n", new_matriz->lin);
-            printf("colunas: %d\n", new_matriz->col);
-            //mimprimir(new_matriz);
-            printf("bloco lin_inicio = %d\n", matriz_bloco[i]->bloco->lin_inicio);
-            printf("bloco lin_fim = %d\n", matriz_bloco[i]->bloco->lin_fim);
-            printf("bloco col_inicio = %d\n", matriz_bloco[i]->bloco->col_inicio);
-            printf("bloco col_fim = %d\n\n", matriz_bloco[i]->bloco->col_fim);*/
         }
+
         //ajusta último bloco para abranger as colunas restantes
         matriz_bloco[divisor - 1]->bloco->col_fim = mat_col;
-
-        /*printf("ADJUSTED-----\nlinhas: %d\n", new_matriz->lin);
-        printf("colunas: %d\n", new_matriz->col);
-        //mimprimir(new_matriz);
-        printf("bloco lin_inicio = %d\n", matriz_bloco[divisor-1]->bloco->lin_inicio);
-        printf("bloco lin_fim = %d\n", matriz_bloco[divisor-1]->bloco->lin_fim);
-        printf("bloco col_inicio = %d\n", matriz_bloco[divisor-1]->bloco->col_inicio);
-        printf("bloco col_fim = %d\n", matriz_bloco[divisor-1]->bloco->col_fim);*/
 
     }
     return matriz_bloco;
 }
 
-
 /*
-function particionar_matriz
-Aloca espaço para a matriz resultado, seguindo as definições do tamanho para matriz
+function csubmatrizv2
+Aloca espaço para o bloco de matriz resultado, seguindo as definições do tamanho para matriz
 resultante da mutiplicação.
 @return matriz_bloco, ponteiro para estrutura matriz_bloco_t
 @param mat_lin, número de linhas da matriz resultante
@@ -411,11 +356,8 @@ matriz_bloco_t **csubmatrizv2(int mat_lin, int mat_col, int divisor)
         mzerar(matriz_bloco[i]->matriz);
     }
 
-    //mymatriz *matriz_bloco_2 = (mymatriz *)malloc(sizeof(mymatriz));
-
     for (int i = 0; i < divisor; i++)
     {
-        //matriz_bloco[i]->matriz = matriz_bloco_2;
         matriz_bloco[i]->bloco->lin_inicio = 0;
         matriz_bloco[i]->bloco->lin_fim = mat_lin;
         matriz_bloco[i]->bloco->col_inicio = 0;
