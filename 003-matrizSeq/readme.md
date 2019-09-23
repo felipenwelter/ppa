@@ -3,10 +3,11 @@
 ## Objetivo:
 - Implementar uma biblioteca de manipulação de matrizes de inteiro em C.
 - Implementar uma biblioteca com as operações de soma e multiplicação de matrizes.
+- Implementar procedimentos para realizar a multiplicação de matrizes em blocos.
 
 ## Arquivos:
 
-A implementação do arquivo main.c segue o exemplo disponibilizado no moodle. A implementação de mainEx01 e mainEx02 também segue a estrutura original.
+A implementação do arquivo main.c segue o exemplo disponibilizado no moodle. A implementação de mainEx01 e mainEx02 também segue a estrutura original. O arquivo mainEx03 teve pequenas alterações a partir do exemplo disponibilizado pelo professor.
 
 [BIBLIOTECAS IMPLEMENTADAS]
 - **matrizv3.h**: headers das funções de gerência de matrizes;
@@ -17,10 +18,12 @@ A implementação do arquivo main.c segue o exemplo disponibilizado no moodle. A
 [ARQUIVOS PARA EXECUÇÃO]
 - **main.c**: código para teste simplificado da biblioteca de matrizes, seguindo a estrutura do moodle;
 - **mainEx01.c**: exercício 01, que realiza a leitura de uma matriz de arquivo e executa as operações disponíveis na biblioteca de matrizes. Segue implementação original disponibilizada pelo professor;
-- **mainEx02.c**: exercício 02, que realiza a soma e multiplicação de matrizes/
+- **mainEx02.c**: exercício 02, que realiza a soma e multiplicação de matrizes.
+- **mainEx03.c**: exercício 03, que realiza a multiplicação de matrizes em blocos.
 
 [ARQUIVOS AUXILIARES]
 - **mat_a3x4.example** e **mat_b4x3.example**: matrizes exemplos A (3x4) e B(4x3);
+- **arquivos .map**: matrizes geradas pela função gmat, que podem ser utilizadas para teste.
 - **toolsv3.(c/h)**: biblioteca de leitura/escrita de matrizes em arquivos;
 - **gera_matrizv3.c**: fontes do programa de geração de matrizes em arquivo;
 - **makefile**: para compilar o arquivo fonte (ver detalhes sobre como gerar os arquivos mais abaixo);
@@ -33,12 +36,15 @@ Para gerar os arquivos para execução é necessário executar o comando abaixo 
 
 Será apresentado em tela:
 ```
-gcc -Wall -O3 matriz-operacoesv3.o matrizv3.o toolsv3.o mainEx02.c -o mainEx02 
-gcc -Wall -O3 matrizv3.o toolsv3.o gera_matrizv3.c -o gmat 
 gcc -Wall -O3 matrizv3.o toolsv3.o mainEx01.c -o mainEx01 
+gcc -Wall -O3 matriz-operacoesv3.o matrizv3.o toolsv3.o mainEx02.c -o mainEx02 
+gcc -Wall -O3 matriz-operacoesv3.o matrizv3.o toolsv3.o mainEx03.c -o mainEx03 
+
 
 ####### Exemplo de Execução #######
 ./mainEx01 mat_a3x4.example mat_b4x3.example
+./mainEx02 5x5-mat.map 5x5-mat.map
+./mainEx03 5x5-mat.map 5x5-mat.map
 ```
 
 ## Execução:
@@ -223,8 +229,34 @@ Será apresentado em tela:
 [mult_t0 vs mult_t5]    ** Matrizes são iguais **
 ```
 
+- Para mainEx03.c:
+> `./mainEx03 5x5-mat.map 5x5-mat.map`
 
+Será apresentado em tela:
+```
+ ##### multiplicar_t1 de Matrizes #####
+	#0	#1	#2	#3	#4	
+0:	[112]	[63]	[130]	[63]	[119]	
+1:	[174]	[95]	[194]	[105]	[179]	
+2:	[83]	[48]	[112]	[89]	[106]	
+3:	[56]	[30]	[66]	[48]	[69]	
+4:	[134]	[81]	[168]	[113]	[154]	
 
+	Runtime: 0.000006
+
+ ##### multiplicar_t1 de Matrizes #####
+	#0	#1	#2	#3	#4	
+0:	[112]	[63]	[130]	[63]	[119]	
+1:	[174]	[95]	[194]	[105]	[179]	
+2:	[83]	[48]	[112]	[89]	[106]	
+3:	[56]	[30]	[66]	[48]	[69]	
+4:	[134]	[81]	[168]	[113]	[154]	
+
+	Runtime: 0.000009
+
+ ##### Comparação dos resultados da Multiplicação de matrizes #####
+[mult_t0 vs multbloco_t0]	** Matrizes são iguais **
+```
 
 ## Análise dinâmica:
 
@@ -389,4 +421,56 @@ Será apresentado em tela:
 ==13473== 
 ==13473== For counts of detected and suppressed errors, rerun with: -v
 ==13473== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+```
+
+- Para mainEx03.c:
+> `valgrind ./mainEx02 5x5-mat.map 5x5-mat.map`
+
+Será apresentado em tela:
+```
+==13801== Memcheck, a memory error detector
+==13801== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==13801== Using Valgrind-3.13.0 and LibVEX; rerun with -h for copyright info
+==13801== Command: ./mainEx03 5x5-mat.map 5x5-mat.map
+==13801== 
+
+%%%%%%%%
+
+ ##### multiplicar_t1 de Matrizes #####
+	#0	#1	#2	#3	#4	
+0:	[112]	[63]	[130]	[63]	[119]	
+1:	[174]	[95]	[194]	[105]	[179]	
+2:	[83]	[48]	[112]	[89]	[106]	
+3:	[56]	[30]	[66]	[48]	[69]	
+4:	[134]	[81]	[168]	[113]	[154]	
+
+	Runtime: 0.006377
+
+ ##### multiplicar_t1 de Matrizes #####
+	#0	#1	#2	#3	#4	
+0:	[112]	[63]	[130]	[63]	[119]	
+1:	[174]	[95]	[194]	[105]	[179]	
+2:	[83]	[48]	[112]	[89]	[106]	
+3:	[56]	[30]	[66]	[48]	[69]	
+4:	[134]	[81]	[168]	[113]	[154]	
+
+	Runtime: 0.008335
+
+ ##### Comparação dos resultados da Multiplicação de matrizes #####
+[mult_t0 vs multbloco_t0]	** Matrizes são iguais **
+==13801== 
+==13801== HEAP SUMMARY:
+==13801==     in use at exit: 680 bytes in 31 blocks
+==13801==   total heap usage: 154 allocs, 123 frees, 22,328 bytes allocated
+==13801== 
+==13801== LEAK SUMMARY:
+==13801==    definitely lost: 48 bytes in 3 blocks
+==13801==    indirectly lost: 632 bytes in 28 blocks
+==13801==      possibly lost: 0 bytes in 0 blocks
+==13801==    still reachable: 0 bytes in 0 blocks
+==13801==         suppressed: 0 bytes in 0 blocks
+==13801== Rerun with --leak-check=full to see details of leaked memory
+==13801== 
+==13801== For counts of detected and suppressed errors, rerun with: -v
+==13801== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 ```
