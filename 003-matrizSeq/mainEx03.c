@@ -94,13 +94,20 @@ int main(int argc, char *argv[]) {
 	printf("\n ##### multiplicar_t1 de Matrizes #####\n");
 	start_time = wtime();
 
-	Vsubmat_a = particionar_matriz (mat_a.matriz, N, La, 1, 2);
-	Vsubmat_b = particionar_matriz (mat_b.matriz, Lb, M, 0, 2);
+	Vsubmat_a = particionar_matriz (mat_a.matriz, N, La, 1, nro_submatrizes);
+	Vsubmat_b = particionar_matriz (mat_b.matriz, Lb, M, 0, nro_submatrizes);
 	Vsubmat_c = csubmatrizv2(N, M, nro_submatrizes);
 
-	multiplicar_submatriz (Vsubmat_a[0], Vsubmat_b[0], Vsubmat_c[0]);
-	multiplicar_submatriz (Vsubmat_a[1], Vsubmat_b[1], Vsubmat_c[1]);
+	//multiplicacao de blocos
+	for (int i = 0; i < nro_submatrizes; i++){
+		multiplicar_submatriz (Vsubmat_a[i], Vsubmat_b[i], Vsubmat_c[i]);
+	}
+
+	//soma os blocos separados
 	mmultbloco[0] = msomar(Vsubmat_c[0]->matriz,Vsubmat_c[1]->matriz, 1);
+	for (int i = 2; i < nro_submatrizes; i++){
+		mmultbloco[0] = msomar(mmultbloco[0],Vsubmat_c[i]->matriz, 1);	
+	}
 
 	end_time = wtime();
 	mimprimir(mmultbloco[0]);

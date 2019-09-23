@@ -209,8 +209,6 @@ mymatriz *mmultiplicar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
     return res;
 }
 
-
-
 /*
 function multiplicar_submatriz
 Multiplica a mat_suba pela mat_subb atribuindo o resultado a mat_subc.
@@ -266,11 +264,11 @@ matriz_bloco_t **particionar_matriz(int **matriz, int mat_lin, int mat_col, int 
 
     //verificar se divisor tem valor válido
     if (orientacao == 0 && (divisor > mat_lin)){
-        printf ("** Erro: Divisor maior que o número de linhas **\n");
+        printf ("** Erro: Divisor (%d) maior que o número de linhas (%d) **\n", divisor, mat_lin);
         return NULL;
     }else{
         if (orientacao == 1 && (divisor > mat_col)){
-            printf("** Erro: Divisor maior que o número de colunas **\n");
+            printf("** Erro: Divisor (%d) maior que o número de colunas (%d) **\n", divisor, mat_col);
             return NULL;
         }
     }
@@ -299,15 +297,12 @@ matriz_bloco_t **particionar_matriz(int **matriz, int mat_lin, int mat_col, int 
             matriz_bloco[i]->bloco->lin_fim = (i + 1) * lin_div;
             matriz_bloco[i]->bloco->col_inicio = 0;
             matriz_bloco[i]->bloco->col_fim = mat_col;
-
         }
         //ajusta último bloco para abranger as linhas restantes
         matriz_bloco[divisor - 1]->bloco->lin_fim = mat_lin;
-
     }
     else
     {
-        //printf("\norientacao COLUNAS (corte vertical)\n");
         int lin_div = mat_col / divisor; //tamanho do bloco (colunas)
         for (int i = 0; i < divisor; i++)
         {
@@ -320,7 +315,6 @@ matriz_bloco_t **particionar_matriz(int **matriz, int mat_lin, int mat_col, int 
 
         //ajusta último bloco para abranger as colunas restantes
         matriz_bloco[divisor - 1]->bloco->col_fim = mat_col;
-
     }
     return matriz_bloco;
 }

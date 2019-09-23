@@ -8,6 +8,7 @@
 // %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 int main(int argc, char *argv[]) {
 
+	printf("\n\n\n NAO UTILIZAR ESSE ARQUIVO, APENAS ./mainEx03\n\n\n");
 	// %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
 	// DECLARAÇÃO de VARIÁVEIS
 	mymatriz mat_a, mat_b;
