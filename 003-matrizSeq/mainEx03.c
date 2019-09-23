@@ -102,13 +102,31 @@ int main(int argc, char *argv[]) {
 	Vsubmat_b = particionar_matriz (mat_b.matriz, Lb, M, 0, 2);
 	Vsubmat_c = csubmatrizv2(N, M, nro_submatrizes);
 
+
+	printf("pre\n");
+	//Vsubmat_c[0]->matriz->matriz[0][0] = -30;
+	mimprimir(Vsubmat_c[0]->matriz);
 	multiplicar_submatriz (Vsubmat_a[0], Vsubmat_b[0], Vsubmat_c[0]);
+		printf("imprimindo resultado da primeira operacao em blocos:\n");
+		mimprimir(Vsubmat_c[0]->matriz);
 
 
-	
+
+	printf("pre\n");
+	mimprimir(Vsubmat_c[1]->matriz);
 	multiplicar_submatriz (Vsubmat_a[1], Vsubmat_b[1], Vsubmat_c[1]);
+	printf("imprimindo resultado da segunda operacao em blocos:\n");
+	mimprimir(Vsubmat_c[1]->matriz);
+
+	printf("endereço Vsubmat_c[0]->matriz[0][0] = %p\n", &(Vsubmat_c[0]->matriz->matriz[0][0]));
+	printf("Vsubmat_c[0]->matriz[0][0] = %d \n ", Vsubmat_c[0]->matriz->matriz[0][0]);
+	printf("endereço Vsubmat_c[1]->matriz[0][0] = %p\n", &(Vsubmat_c[1]->matriz->matriz[0][0]));
+	printf("Vsubmat_c[1]->matriz[0][0] = %d \n", Vsubmat_c[1]->matriz->matriz[0][0]);
+
 	mmultbloco[0] = msomar(Vsubmat_c[0]->matriz,Vsubmat_c[1]->matriz, 1);
-	
+	printf("imprimindo resultado da matriz final:\n");
+	mimprimir(mmultbloco[0]);
+
 	end_time = wtime();
 	mimprimir(mmultbloco[0]);
 	printf("\tRuntime: %f\n", end_time - start_time);
