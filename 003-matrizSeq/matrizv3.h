@@ -12,18 +12,19 @@ typedef struct {
 } bloco_t;
 
 typedef struct {
-  int **matriz;
+  int **matriz; //int **matriz; -> teacher changed to mymatriz *matriz;
+  int lin;
+  int col;
+} mymatriz;
+
+typedef struct {
+  mymatriz *matriz;
   bloco_t *bloco;
   int mat_col;
   int mat_lin;
   int divisor;
 } matriz_bloco_t;
 
-typedef struct {
-  int **matriz; //int **matriz; -> teacher changed to mymatriz *matriz;
-  int lin;
-  int col;
-} mymatriz;
 #endif
 
 // gerência de matrizes
