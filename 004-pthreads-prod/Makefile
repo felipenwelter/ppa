@@ -5,20 +5,18 @@ CCFLAGS = -Wall
 LDFLAGS = -pthread #-pg
 TARGET = gmat pthreads-prod main_thread help
 
+all: $(TARGET)
+
 %.o: %.c
 	$(CC) $(CCFLAGS) -c $<
 
 %: %.o
 	$(CC) $(LDFLAGS) $^ -o $@
 
-all: $(TARGET)
-
-# Dependencias
-
 pthreads-prod: pthreads-prod.c
 
-main_thread: main_thread.c matrizv3.o toolsv3.o matriz-operacoesv3.o
-			$(CC) $(CCFLAGS) matriz-operacoesv3.o matrizv3.o toolsv3.o main_thread.c -o $@ $(LDFLAGS)
+main_thread: matrizv3.o toolsv3.o matriz-operacoesv3.o matriz-operacoes-threads.o main_thread.c
+			$(CC) $(CCFLAGS) matriz-operacoesv3.o matrizv3.o toolsv3.o matriz-operacoes-threads.o main_thread.c -o $@ $(LDFLAGS)
 
 gmat: matrizv3.o toolsv3.o gera_matrizv3.c
 		$(CC) $(CCFLAGS) matrizv3.o toolsv3.o gera_matrizv3.c -o $@ $(LDFLAGS)
