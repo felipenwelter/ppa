@@ -237,6 +237,17 @@ int multiplicar_submatriz(matriz_bloco_t *mat_suba, matriz_bloco_t *mat_subb, ma
         }
     }
 
+    /*for (int i = mat_suba->bloco->lin_inicio; i < mat_suba->bloco->lin_fim; i++)
+    {
+        for (int k = mat_suba->bloco->col_inicio; k < mat_suba->bloco->col_fim; k++)
+        {
+            for (int j = mat_subb->bloco->col_inicio; j < mat_subb->bloco->col_fim; j++)
+            {
+                mat_subc->matriz->matriz[i][j] += mat_suba->matriz->matriz[i][k] * mat_subb->matriz->matriz[k][j];
+            }
+        }
+    }*/
+
     return 0;
 }
 
