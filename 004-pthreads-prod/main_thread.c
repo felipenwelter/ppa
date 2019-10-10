@@ -46,7 +46,7 @@ function main
 Funcao principal para realizar a multiplicacao de matrizes sequencial, sequencial por thread,
 em bloco e em bloco por thread, comparando resultados e mostrando tempo e speedup.
 @return 0
-@param argv, devem ser informadas a matriz_a e matriz_b
+@param argv, devem ser informadas a matriz_a e matriz_b e opcionalmente número de threads/blocos
 */
 int main(int argc, char *argv[])
 {
@@ -91,15 +91,15 @@ int main(int argc, char *argv[])
     double speedup_BlC;
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
-    if (argc != 3)
+    if (argc < 3)
     {
-        printf("ERRO: Numero de parametros %s <matriz_a> <matriz_b>\n", argv[0]);
+        printf("ERRO: Numero de parametros %s <matriz_a> <matriz_b> <threads>\n", argv[0]);
         exit(1);
     }
 
-    if (nro_submatrizes != ntasks){
-        printf("ERRO: parametro <nro_submatrizes=%d> é incompatível com <ntasks=%d>\nPrograma será abortado!\n",nro_submatrizes,ntasks);
-        exit(1);
+    if (argv[3] != NULL){
+        nro_submatrizes = atoi(argv[3]);
+        ntasks = atoi(argv[3]);
     }
 
     // %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
@@ -142,7 +142,6 @@ int main(int argc, char *argv[])
     filein_matriz(mat_b.matriz, Lb, M, fmat, vet_line, nr_line);
     free(vet_line);
     fclose(fmat);
-
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
 

@@ -29,4 +29,4 @@ help:
 	@echo
 	@echo "####### Exemplo de Execução #######"
 	@echo "./main_thread 5x4-mat.map 4x5-mat.map"
-	@echo "./main_thread 1000x500-mat.map 500x1000-mat.map"
+	@echo "./main_thread 1000x500-mat.map 500x1000-mat.map 10"

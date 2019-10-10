@@ -33,8 +33,6 @@ O tamanho da matriz é um fator determinante para haver speedup, ao executar a m
 - **main_thread.c**: implementação das funções de multiplicação de matrizes sequencial, sequencial em bloco, em threads e threads em bloco.
 
 [ARQUIVOS AUXILIARES]
-- **5x4-mat.map** e **4x5-mat.map**: matrizes exemplos A (5x4) e B(4x5).
-- **1000x500-mat.map** e **500x1000-mat.map**: matrizes exemplos A (1000x500) e B(500x1000)
 - **arquivos .map**: matrizes geradas pela função gmat, que podem ser utilizadas para teste.
 - **toolsv3.(c/h)**: biblioteca de leitura/escrita de matrizes em arquivos;
 - **gera_matrizv3.c**: fontes do programa de geração de matrizes em arquivo;
@@ -52,7 +50,7 @@ gcc -Wall matriz-operacoesv3.o matrizv3.o toolsv3.o matriz-operacoes-threads.o m
 
 ####### Exemplo de Execução #######
 ./main_thread 5x4-mat.map 4x5-mat.map
-./main_thread 1000x500-mat.map 500x1000-mat.map
+./main_thread 1000x500-mat.map 500x1000-mat.map 10
 ```
 
 ## Execução:
@@ -88,6 +86,8 @@ Será apresentado em tela:
 - Para main_thread.c:
 > `./main_thread 1000x500-mat.map 500x1000-mat.map`
 
+O terceiro parâmetro é opcional e identifica o número de threads e blocos.
+
 Será apresentado em tela:
 ```
 Executando multiplicação sequencial 10 de 10
@@ -118,7 +118,7 @@ Executando multiplicação multithread em bloco 10 de 10
 Para realizar uma análise dinâmica do código e verificar eventuais problemas, deve-se previamente ter instalado o programa *valgrind* e executar o comando abaixo:
 
 - Para main_thread.c:
-> `valgrind ./main_thread 1000x500-mat.map 500x1000-mat.map`
+> `valgrind ./main_thread 4x5-mat.map 5x4-mat.map`
 
 Será apresentado em tela:
 ```
