@@ -28,6 +28,5 @@ help:
 	@echo
 	@echo
 	@echo "####### Exemplo de Execução #######"
-	@echo "./mainEx01 mat_a3x4.example mat_b4x3.example"
-	@echo "./mainEx02 5x5-mat.map 5x5-mat.map"
-	@echo "./mainEx03 5x5-mat.map 5x5-mat.map"
+	@echo "./main_thread 5x4-mat.map 4x5-mat.map"
+	@echo "./main_thread 1000x500-mat.map 500x1000-mat.map"

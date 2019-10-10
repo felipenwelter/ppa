@@ -1,6 +1,16 @@
 #include "matrizv3.h"
 #include "matriz-operacoesv3.h"
 
+/*
+function multiplicarTh
+Realiza multiplicacao de matriz sequencial, para threads
+@return 0
+@param *mat_a, ponteiro para mymatriz base para multiplicacao
+@param *mat_b, ponteiro para mymatriz base para multiplicacao
+@param *mat_c, ponteiro para mymatriz resultado
+@param tid, inteiro que representa o número da thread
+@param ntasks, inteiro que representa o número total de threads
+*/
 int multiplicarTh(mymatriz *mat_a, mymatriz *mat_b, mymatriz *mat_c, int tid, int ntasks)
 {
     
@@ -21,6 +31,14 @@ int multiplicarTh(mymatriz *mat_a, mymatriz *mat_b, mymatriz *mat_c, int tid, in
     return 0;
 }
 
+/*
+function multiplicarThblocos
+Realiza multiplicacao de matriz em bloco, para threads
+@return 0
+@param *mat_suba, ponteiro para matriz_bloco_t base para multiplicacao
+@param *mat_subb, ponteiro para matriz_bloco_t base para multiplicacao
+@param *mat_subc, ponteiro para matriz_bloco_t resultado
+*/
 int multiplicarThblocos(matriz_bloco_t *mat_suba, matriz_bloco_t *mat_subb, matriz_bloco_t *mat_subc)
 {
     multiplicar_submatriz(mat_suba, mat_subb, mat_subc);   

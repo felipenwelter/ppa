@@ -13,6 +13,7 @@ typedef struct
     matriz_bloco_t *mat_bloco_c;
 } param_t;
 
+
 /*
 function exec_multi_thread
 Instancia cada thread para multiplicacao de matriz sequencial
@@ -312,19 +313,19 @@ int main(int argc, char *argv[])
 
     printf("\n\tCOMPARAR MATRIZ_SeqC c/ MATRIZ_ThreadC\n\t");
     mcomparar(res_matriz_SeqC, res_matriz_ThreadC);
-
+    
     printf("\n\tCOMPARAR MATRIZ_SeqC c/ MATRIZ_ThreadBlC\n\t");
     mcomparar(res_matriz_SeqC, res_matriz_ThreadBlC);
 
-    printf("\n\tTempo Médio tempo_MATRIZ_SeqC:\t\t%.20f sec \n", tempo_MATRIZ_SeqC / count_for);
-    printf("\tTempo Médio tempo_MATRIZ_SeqBlC:\t%.20f\n", tempo_MATRIZ_SeqBlC / count_for );
-    printf("\tTempo Médio MATRIZ_ThreadC:\t\t%.20f\n", tempo_MATRIZ_ThreadC / count_for);
-    printf("\tTempo Médio MATRIZ_ThreadBlC:\t\t%.20f\n", tempo_MATRIZ_ThreadBlC / count_for);
+    printf("\n\tTempo Médio tempo_MATRIZ_SeqC:\t\t%.6f sec \n", tempo_MATRIZ_SeqC / count_for);
+    printf("\tTempo Médio tempo_MATRIZ_SeqBlC:\t%.6f sec\n", tempo_MATRIZ_SeqBlC / count_for );
+    printf("\tTempo Médio MATRIZ_ThreadC:\t\t%.6f sec \n", tempo_MATRIZ_ThreadC / count_for);
+    printf("\tTempo Médio MATRIZ_ThreadBlC:\t\t%.6f sec \n", tempo_MATRIZ_ThreadBlC / count_for);
 
     speedup_seqC = (tempo_MATRIZ_SeqC / count_for) / (tempo_MATRIZ_ThreadC / count_for);
     speedup_BlC = (tempo_MATRIZ_SeqBlC / count_for) / (tempo_MATRIZ_ThreadBlC / count_for);
-    printf("\n\tSPEEDUP (MATRIZ_C): \t%.5f (%.2f %c)", speedup_seqC, speedup_seqC*100, 37 );
-    printf("\n\tSPEEDUP (MATRIZ_BLC): \t%.5f (%.2f %c)\n\n", speedup_BlC, speedup_BlC*100, 37 );
+    printf("\n\tSPEEDUP (MATRIZ_C): \t%.5f", speedup_seqC);
+    printf("\n\tSPEEDUP (MATRIZ_BLC): \t%.5f\n\n", speedup_BlC);
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -344,11 +345,6 @@ int main(int argc, char *argv[])
 
     mliberar(&mat_a);
     mliberar(&mat_b);
-
-    free(res_matriz_SeqC);
-    free(res_matriz_SeqBlC);
-    free(res_matriz_ThreadC);
-    free(res_matriz_ThreadBlC);
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
     return 0;
