@@ -90,10 +90,10 @@ Será apresentado em tela:
 
 Será apresentado em tela:
 ```
-Executando multiplicação sequencial
-Executando multiplicação sequencial em bloco
-Executando multiplicação multithread
-Executando multiplicação multithread em bloco
+Executando multiplicação sequencial 10 de 10
+Executando multiplicação sequencial em bloco 10 de 10
+Executando multiplicação multithread 10 de 10
+Executando multiplicação multithread em bloco 10 de 10
 
 	COMPARAR MATRIZ_SeqC c/ MATRIZ_SeqBlC
 	** Matrizes são iguais **
@@ -127,10 +127,10 @@ Será apresentado em tela:
 ==22881== Using Valgrind-3.13.0 and LibVEX; rerun with -h for copyright info
 ==22881== Command: ./main_thread 4x5-mat.map 5x4-mat.map
 ==22881== 
-Executando multiplicação sequencial
-Executando multiplicação sequencial em bloco
-Executando multiplicação multithread
-Executando multiplicação multithread em bloco
+Executando multiplicação sequencial 10 de 10
+Executando multiplicação sequencial em bloco 10 de 10
+Executando multiplicação multithread 10 de 10
+Executando multiplicação multithread em bloco 10 de 10
 
 	COMPARAR MATRIZ_SeqC c/ MATRIZ_SeqBlC
 	** Matrizes são iguais **
