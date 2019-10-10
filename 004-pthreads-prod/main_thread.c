@@ -13,6 +13,12 @@ typedef struct
     matriz_bloco_t *mat_bloco_c;
 } param_t;
 
+/*
+function exec_multi_thread
+Instancia cada thread para multiplicacao de matriz sequencial
+@return NULL
+@param *arg, ponteiro para objeto param_t
+*/
 void *exec_multi_thread(void *arg)
 {
     param_t *p = (param_t *)arg;
@@ -20,6 +26,12 @@ void *exec_multi_thread(void *arg)
     return NULL;
 }
 
+/*
+function exec_multi_thread_blocos
+Instancia cada thread para multiplicacao de matriz em bloco
+@return NULL
+@param *arg, ponteiro para objeto param_t
+*/
 void *exec_multi_thread_blocos(void *arg)
 {
     param_t *p = (param_t *)arg;
@@ -27,44 +39,55 @@ void *exec_multi_thread_blocos(void *arg)
     return NULL;
 }
 
-// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+/*
+function main
+Funcao principal para realizar a multiplicacao de matrizes sequencial, sequencial por thread,
+em bloco e em bloco por thread, comparando resultados e mostrando tempo e speedup.
+@return 0
+@param argv, devem ser informadas a matriz_a e matriz_b
+*/
 int main(int argc, char *argv[])
 {
     // %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
-    // DECLARAÇÃO DE VARIÁVEIS
-    mymatriz mat_a, mat_b;
-    mymatriz **mmult_MATRIZ_SeqC;
-    mymatriz **mmult_MATRIZ_SeqBlC;
-    mymatriz **mmult_MATRIZ_ThreadC;
-    mymatriz **mmult_MATRIZ_ThreadBlC;
+    // Declaração de Variáveis
 
+    //variaveis para armazenar matrizes origem e de resultado
+    mymatriz mat_a, mat_b;
+    mymatriz *res_matriz_SeqC;
+    mymatriz *res_matriz_SeqBlC;
+    mymatriz *res_matriz_ThreadC;
+    mymatriz *res_matriz_ThreadBlC;
+
+    //variaveis para manipulacao de arquivos no disco
     char filename[100];
     FILE *fmat;
     int nr_line;
     int *vet_line = NULL;
     int N, M, La, Lb;
 
-    double start_time, end_time;
-
+    //variaveis para controle de blocos
     matriz_bloco_t **Vsubmat_a = NULL;
     matriz_bloco_t **Vsubmat_b = NULL;
     matriz_bloco_t **Vsubmat_c = NULL;
-    int nro_submatrizes = 4;
+    int nro_submatrizes = 4; //deve ser igual ntasks
 
     //Variaveis executar calculo da média
-    int ntasks = 4;
-    int count_for = 10;
+    int ntasks = 4; //deve ser igual nro_submatrizes
+    int count_for = 10; //numero de repeticoes para média de runtime
 
+    //variaveis para controle de threads
     param_t *args;
     pthread_t *threads;
 
+    //variaveis para controle de tempo (runtime)
+    double start_time, end_time;
     double tempo_MATRIZ_SeqC = 0;
     double tempo_MATRIZ_SeqBlC = 0;
-    double MATRIZ_ThreadC = 0;
-    double MATRIZ_ThreadBlC = 0;
+    double tempo_MATRIZ_ThreadC = 0;
+    double tempo_MATRIZ_ThreadBlC = 0;
     double speedup_seqC;
     double speedup_BlC;
-
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
     if (argc != 3)
@@ -73,12 +96,17 @@ int main(int argc, char *argv[])
         exit(1);
     }
 
+    if (nro_submatrizes != ntasks){
+        printf("ERRO: parametro <nro_submatrizes=%d> é incompatível com <ntasks=%d>\nPrograma será abortado!\n",nro_submatrizes,ntasks);
+        exit(1);
+    }
+
     // %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
     //Leitura da Matriz A (arquivo)
     fmat = fopen(argv[1], "r");
     if (fmat == NULL)
     {
-        printf("Error: Na abertura dos arquivos.");
+        printf("ERRO: na abertura dos arquivos.\n");
         exit(1);
     }
     extrai_parametros_matriz(fmat, &N, &La, &vet_line, &nr_line);
@@ -87,7 +115,7 @@ int main(int argc, char *argv[])
     mat_a.col = La;
     if (malocar(&mat_a))
     {
-        printf("ERROR: Out of memory\n");
+        printf("ERRO: na alocacao de memoria para mat_a.\n");
     }
     filein_matriz(mat_a.matriz, N, La, fmat, vet_line, nr_line);
     free(vet_line);
@@ -99,7 +127,7 @@ int main(int argc, char *argv[])
     fmat = fopen(argv[2], "r");
     if (fmat == NULL)
     {
-        printf("Error: Na abertura dos arquivos.");
+        printf("ERRO: na abertura dos arquivos.\n");
         exit(1);
     }
     extrai_parametros_matriz(fmat, &Lb, &M, &vet_line, &nr_line);
@@ -108,7 +136,7 @@ int main(int argc, char *argv[])
     mat_b.col = M;
     if (malocar(&mat_b))
     {
-        printf("ERROR: Out of memory\n");
+        printf("ERRO: na alocacao de memoria para mat_b.\n");
     }
     filein_matriz(mat_b.matriz, Lb, M, fmat, vet_line, nr_line);
     free(vet_line);
@@ -120,35 +148,32 @@ int main(int argc, char *argv[])
 
 
 
-
-
-
     // %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
     // Multiplicação Sequencial
-    mmult_MATRIZ_SeqC = (mymatriz **)malloc(sizeof(mymatriz *));
+    printf("\rExecutando multiplicação sequencial\n");
+
+    res_matriz_SeqC = (mymatriz *)malloc(sizeof(mymatriz));
     for (int count = 0; count < count_for; count++)
     {   
         start_time = wtime();
-        mmult_MATRIZ_SeqC[0] = mmultiplicar(&mat_a, &mat_b, 1);
+        res_matriz_SeqC = mmultiplicar(&mat_a, &mat_b, 1);  //1=mais rápido (2.04), 5=mais lento (5.94)
         end_time = wtime();
         tempo_MATRIZ_SeqC += end_time - start_time;
-        //printf("sequencial %d. tempo: %.20f\n",count, end_time - start_time);
+        //printf("sequencial %d. tempo: %.20f \t avg= %.20f\n",count, end_time - start_time, tempo_MATRIZ_SeqC / (count+1));
     }
     sprintf(filename, "MATRIZ_SeqC.result");
     fmat = fopen(filename, "w");
-    fileout_matriz(mmult_MATRIZ_SeqC[0], fmat);
+    fileout_matriz(res_matriz_SeqC, fmat);
     fclose(fmat);
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
 
-
-
-
     // %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
     // Multiplicação Sequencial em Bloco
-    mmult_MATRIZ_SeqBlC = (mymatriz **)malloc(sizeof(mymatriz *));
+    printf("\rExecutando multiplicação sequencial em bloco\n");
+    res_matriz_SeqBlC = (mymatriz *)malloc(sizeof(mymatriz));
     for (int count = 0; count < count_for; count++)
     {
         start_time = wtime();
@@ -162,46 +187,45 @@ int main(int argc, char *argv[])
         }
 
         //soma os blocos separados
-        mmult_MATRIZ_SeqBlC[0] = msomar(Vsubmat_c[0]->matriz,Vsubmat_c[1]->matriz, 1);
-
+        res_matriz_SeqBlC = msomar(Vsubmat_c[0]->matriz,Vsubmat_c[1]->matriz, 1);
         for (int i = 2; i < nro_submatrizes; i++){
-            mmult_MATRIZ_SeqBlC[0] = msomar(mmult_MATRIZ_SeqBlC[0],Vsubmat_c[i]->matriz, 1);	
+            res_matriz_SeqBlC = msomar(res_matriz_SeqBlC,Vsubmat_c[i]->matriz, 1);	
         }
 
         end_time = wtime();
         tempo_MATRIZ_SeqBlC += end_time - start_time;
-        printf("bloco %d. tempo: %.20f \t avg= %.20f\n",count, end_time - start_time, tempo_MATRIZ_SeqBlC / (count+1));
+        //printf("bloco %d. tempo: %.20f \t avg= %.20f\n",count, end_time - start_time, tempo_MATRIZ_SeqBlC / (count+1));
     }
     sprintf(filename, "MATRIZ_SeqBlC.result");
     fmat = fopen(filename, "w");
-    fileout_matriz(mmult_MATRIZ_SeqBlC[0], fmat);
+    fileout_matriz(res_matriz_SeqBlC, fmat);
     fclose(fmat);
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
 
-
-
     // %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
     // Multiplicação MultiThread
-    mmult_MATRIZ_ThreadC = (mymatriz **)malloc(sizeof(mymatriz *));
-    mmult_MATRIZ_ThreadC[0] = malloc(sizeof(mymatriz));
-    mmult_MATRIZ_ThreadC[0]->matriz = NULL;
-    mmult_MATRIZ_ThreadC[0]->lin = mat_a.lin;
-    mmult_MATRIZ_ThreadC[0]->col = mat_b.col;
+    printf("\rExecutando multiplicação multithread\n");
+
+    res_matriz_ThreadC = (mymatriz *)malloc(sizeof(mymatriz));
+    res_matriz_ThreadC = malloc(sizeof(mymatriz));
+    res_matriz_ThreadC->matriz = NULL;
+    res_matriz_ThreadC->lin = mat_a.lin;
+    res_matriz_ThreadC->col = mat_b.col;
 
     //realiza a alocação de memória para matriz resultado
-    if (malocar(mmult_MATRIZ_ThreadC[0])) {
-        printf ("ERROR: Out of memory\n");
-            exit(1);
+    if (malocar(res_matriz_ThreadC)) {
+        printf("ERRO: na alocacao de memoria para res_matriz_ThreadC.\n");
+        exit(1);
     }else{
-        mzerar(mmult_MATRIZ_ThreadC[0]);
+        mzerar(res_matriz_ThreadC);
     }
 
     for (int count = 0; count < count_for; count++)
     {
-        mzerar(mmult_MATRIZ_ThreadC[0]);
+        mzerar(res_matriz_ThreadC);
         threads = (pthread_t *)malloc(ntasks * sizeof(pthread_t));
         args = (param_t *)malloc(ntasks * sizeof(param_t));
         start_time = wtime();
@@ -211,7 +235,7 @@ int main(int argc, char *argv[])
             args[i].ntasks = ntasks;
             args[i].mat_a = &mat_a;
             args[i].mat_b = &mat_b;
-            args[i].mat_c = mmult_MATRIZ_ThreadC[0];
+            args[i].mat_c = res_matriz_ThreadC;
             pthread_create(&threads[i], NULL, exec_multi_thread, (void *)(args + i));
         }
 
@@ -220,42 +244,29 @@ int main(int argc, char *argv[])
             pthread_join(threads[i], NULL);
         }
         end_time = wtime();
-        MATRIZ_ThreadC += end_time - start_time;
-        //printf("thread %d. tempo: %.20f\n",count, end_time - start_time);
+        tempo_MATRIZ_ThreadC += end_time - start_time;
+        //printf("sequencial thread %d. tempo: %.20f \t avg= %.20f\n",count, end_time - start_time, tempo_MATRIZ_ThreadC / (count+1));
+        
     }
     sprintf(filename, "MATRIZ_ThreadC.result");
     fmat = fopen(filename, "w");
-    fileout_matriz(mmult_MATRIZ_ThreadC[0], fmat);
+    fileout_matriz(res_matriz_ThreadC, fmat);
     fclose(fmat);
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
 
 
 
-
-
-
     // %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
     // Multiplicação MultiThreads em Bloco
-    mmult_MATRIZ_ThreadBlC = (mymatriz **)malloc(sizeof(mymatriz *));
+    printf("Executando multiplicação multithread em bloco\n");
+
+    res_matriz_ThreadBlC = (mymatriz *)malloc(sizeof(mymatriz));
     for (int count = 0; count < count_for; count++)
     {
         Vsubmat_a = particionar_matriz(mat_a.matriz, N, La, 1, nro_submatrizes);
         Vsubmat_b = particionar_matriz(mat_b.matriz, Lb, M, 0, nro_submatrizes);
         Vsubmat_c = csubmatrizv2(N, M, nro_submatrizes);
-
-        //printf("teste \n");
-        //mimprimir(Vsubmat_a[0]->matriz);
-        //printf("lin %d %d col %d %d\n", Vsubmat_a[0]->bloco->lin_inicio, Vsubmat_a[0]->bloco->lin_fim, Vsubmat_a[0]->bloco->col_inicio, Vsubmat_a[0]->bloco->col_fim);
-        //printf("lin %d %d col %d %d\n", Vsubmat_a[1]->bloco->lin_inicio, Vsubmat_a[1]->bloco->lin_fim, Vsubmat_a[1]->bloco->col_inicio, Vsubmat_a[1]->bloco->col_fim);
-
-        //mimprimir(Vsubmat_b[0]->matriz);
-        //printf("lin %d %d col %d %d\n", Vsubmat_b[0]->bloco->lin_inicio, Vsubmat_b[0]->bloco->lin_fim, Vsubmat_b[0]->bloco->col_inicio, Vsubmat_b[0]->bloco->col_fim);
-        //printf("lin %d %d col %d %d\n", Vsubmat_b[1]->bloco->lin_inicio, Vsubmat_b[1]->bloco->lin_fim, Vsubmat_b[1]->bloco->col_inicio, Vsubmat_b[1]->bloco->col_fim);
-
-        //mimprimir(Vsubmat_c[0]->matriz);
-        //printf("lin %d %d col %d %d\n", Vsubmat_c[0]->bloco->lin_inicio, Vsubmat_c[0]->bloco->lin_fim, Vsubmat_c[0]->bloco->col_inicio, Vsubmat_c[0]->bloco->col_fim);
-        //printf("lin %d %d col %d %d\n", Vsubmat_c[1]->bloco->lin_inicio, Vsubmat_c[1]->bloco->lin_fim, Vsubmat_c[1]->bloco->col_inicio, Vsubmat_c[1]->bloco->col_fim);
 
         threads = (pthread_t *)malloc(ntasks * sizeof(pthread_t));
         args = (param_t *)malloc(ntasks * sizeof(param_t));
@@ -275,19 +286,19 @@ int main(int argc, char *argv[])
             pthread_join(threads[i], NULL);
         }
         
-        mmult_MATRIZ_ThreadBlC[0] = msomar(Vsubmat_c[0]->matriz, Vsubmat_c[1]->matriz, 1);
-
-        //printf("fim multiplicacao thread bloco\n");
-        //mimprimir(mmult_MATRIZ_ThreadBlC[0]);
-        //mimprimir(mmult_MATRIZ_ThreadC[0]);
+        //soma os blocos separados
+        res_matriz_ThreadBlC = msomar(Vsubmat_c[0]->matriz,Vsubmat_c[1]->matriz, 1);
+        for (int i = 2; i < nro_submatrizes; i++){
+            res_matriz_ThreadBlC = msomar(res_matriz_ThreadBlC,Vsubmat_c[i]->matriz, 1);	
+        }
 
         end_time = wtime();
-        MATRIZ_ThreadBlC += end_time - start_time;
-        //printf("thread bloco %d. tempo: %.20f\n",count, end_time - start_time);
+        tempo_MATRIZ_ThreadBlC += end_time - start_time;
+        //printf("bloco thread %d. tempo: %.20f \t avg= %.20f\n",count, end_time - start_time, tempo_MATRIZ_ThreadBlC / (count+1));
     }
     sprintf(filename, "MATRIZ_ThreadBlC.result");
     fmat = fopen(filename, "w");
-    fileout_matriz(mmult_MATRIZ_ThreadBlC[0], fmat);
+    fileout_matriz(res_matriz_ThreadBlC, fmat);
     fclose(fmat);
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -297,21 +308,21 @@ int main(int argc, char *argv[])
     // %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
     // Impressao dos resultados de tempo
     printf("\n\tCOMPARAR MATRIZ_SeqC c/ MATRIZ_SeqBlC\n\t");
-    mcomparar(mmult_MATRIZ_SeqC[0], mmult_MATRIZ_SeqBlC[0]);
+    mcomparar(res_matriz_SeqC, res_matriz_SeqBlC);
 
     printf("\n\tCOMPARAR MATRIZ_SeqC c/ MATRIZ_ThreadC\n\t");
-    mcomparar(mmult_MATRIZ_SeqC[0], mmult_MATRIZ_ThreadC[0]);
+    mcomparar(res_matriz_SeqC, res_matriz_ThreadC);
 
     printf("\n\tCOMPARAR MATRIZ_SeqC c/ MATRIZ_ThreadBlC\n\t");
-    mcomparar(mmult_MATRIZ_SeqC[0], mmult_MATRIZ_ThreadBlC[0]);
+    mcomparar(res_matriz_SeqC, res_matriz_ThreadBlC);
 
-    printf("\n\tTempo Médio tempo_MATRIZ_SeqC:\t\t%.20f\n", tempo_MATRIZ_SeqC / count_for);
+    printf("\n\tTempo Médio tempo_MATRIZ_SeqC:\t\t%.20f sec \n", tempo_MATRIZ_SeqC / count_for);
     printf("\tTempo Médio tempo_MATRIZ_SeqBlC:\t%.20f\n", tempo_MATRIZ_SeqBlC / count_for );
-    printf("\tTempo Médio MATRIZ_ThreadC:\t\t%.20f\n", MATRIZ_ThreadC / count_for);
-    printf("\tTempo Médio MATRIZ_ThreadBlC:\t\t%.20f\n", MATRIZ_ThreadBlC / count_for);
+    printf("\tTempo Médio MATRIZ_ThreadC:\t\t%.20f\n", tempo_MATRIZ_ThreadC / count_for);
+    printf("\tTempo Médio MATRIZ_ThreadBlC:\t\t%.20f\n", tempo_MATRIZ_ThreadBlC / count_for);
 
-    speedup_seqC = (tempo_MATRIZ_SeqC / count_for) / (MATRIZ_ThreadC / count_for);
-    speedup_BlC = (tempo_MATRIZ_SeqBlC / count_for) / (MATRIZ_ThreadBlC / count_for);
+    speedup_seqC = (tempo_MATRIZ_SeqC / count_for) / (tempo_MATRIZ_ThreadC / count_for);
+    speedup_BlC = (tempo_MATRIZ_SeqBlC / count_for) / (tempo_MATRIZ_ThreadBlC / count_for);
     printf("\n\tSPEEDUP (MATRIZ_C): \t%.5f (%.2f %c)", speedup_seqC, speedup_seqC*100, 37 );
     printf("\n\tSPEEDUP (MATRIZ_BLC): \t%.5f (%.2f %c)\n\n", speedup_BlC, speedup_BlC*100, 37 );
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
@@ -319,26 +330,25 @@ int main(int argc, char *argv[])
 
 
 
-
     // %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
     //Liberação de memória
-    mliberar(mmult_MATRIZ_SeqC[0]);
-    mliberar(mmult_MATRIZ_SeqBlC[0]);
-    mliberar(mmult_MATRIZ_ThreadC[0]);
-    mliberar(mmult_MATRIZ_ThreadBlC[0]);
+    mliberar(res_matriz_SeqC);
+    mliberar(res_matriz_SeqBlC);
+    mliberar(res_matriz_ThreadC);
+    mliberar(res_matriz_ThreadBlC);
 
-    free(mmult_MATRIZ_SeqC[0]);
-    free(mmult_MATRIZ_SeqBlC[0]);
-    free(mmult_MATRIZ_ThreadC[0]);
-    free(mmult_MATRIZ_ThreadBlC[0]);
+    free(res_matriz_SeqC);
+    free(res_matriz_SeqBlC);
+    free(res_matriz_ThreadC);
+    free(res_matriz_ThreadBlC);
 
     mliberar(&mat_a);
     mliberar(&mat_b);
 
-    free(mmult_MATRIZ_SeqC);
-    free(mmult_MATRIZ_SeqBlC);
-    free(mmult_MATRIZ_ThreadC);
-    free(mmult_MATRIZ_ThreadBlC);
+    free(res_matriz_SeqC);
+    free(res_matriz_SeqBlC);
+    free(res_matriz_ThreadC);
+    free(res_matriz_ThreadBlC);
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
     return 0;
