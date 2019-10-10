@@ -324,10 +324,10 @@ int main(int argc, char *argv[])
     printf("\n\tCOMPARAR MATRIZ_SeqC c/ MATRIZ_ThreadBlC\n\t");
     mcomparar(res_matriz_SeqC, res_matriz_ThreadBlC);
 
-    printf("\n\tTempo Médio tempo_MATRIZ_SeqC:\t\t%.6f sec \n", tempo_MATRIZ_SeqC / count_for);
-    printf("\tTempo Médio tempo_MATRIZ_SeqBlC:\t%.6f sec\n", tempo_MATRIZ_SeqBlC / count_for );
-    printf("\tTempo Médio MATRIZ_ThreadC:\t\t%.6f sec \n", tempo_MATRIZ_ThreadC / count_for);
-    printf("\tTempo Médio MATRIZ_ThreadBlC:\t\t%.6f sec \n", tempo_MATRIZ_ThreadBlC / count_for);
+    printf("\n\tTempo Médio MATRIZ_SeqC:\t%.6f sec \n", tempo_MATRIZ_SeqC / count_for);
+    printf("\tTempo Médio MATRIZ_SeqBlC:\t%.6f sec\n", tempo_MATRIZ_SeqBlC / count_for );
+    printf("\tTempo Médio MATRIZ_ThreadC:\t%.6f sec \n", tempo_MATRIZ_ThreadC / count_for);
+    printf("\tTempo Médio MATRIZ_ThreadBlC:\t%.6f sec \n", tempo_MATRIZ_ThreadBlC / count_for);
 
     speedup_seqC = (tempo_MATRIZ_SeqC / count_for) / (tempo_MATRIZ_ThreadC / count_for);
     speedup_BlC = (tempo_MATRIZ_SeqBlC / count_for) / (tempo_MATRIZ_ThreadBlC / count_for);

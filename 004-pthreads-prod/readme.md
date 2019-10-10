@@ -46,7 +46,14 @@ Para gerar os arquivos para execução é necessário executar o comando abaixo 
 
 Será apresentado em tela:
 ```
+gcc -Wall -c matrizv3.c
+gcc -Wall -c toolsv3.c
+gcc -Wall matrizv3.o toolsv3.o gera_matrizv3.c -o gmat -pthread 
+gcc   -pthread   pthreads-prod.c   -o pthreads-prod
+gcc -Wall -c matriz-operacoesv3.c
+gcc -Wall -c matriz-operacoes-threads.c
 gcc -Wall matriz-operacoesv3.o matrizv3.o toolsv3.o matriz-operacoes-threads.o main_thread.c -o main_thread -pthread 
+
 
 ####### Exemplo de Execução #######
 ./main_thread 5x4-mat.map 4x5-mat.map
@@ -104,13 +111,13 @@ Executando multiplicação multithread em bloco 10 de 10
 	COMPARAR MATRIZ_SeqC c/ MATRIZ_ThreadBlC
 	** Matrizes são iguais **
 
-	Tempo Médio tempo_MATRIZ_SeqC:		4.107999 sec 
-	Tempo Médio tempo_MATRIZ_SeqBlC:	5.862923 sec
+	Tempo Médio MATRIZ_SeqC:		4.107999 sec 
+	Tempo Médio MATRIZ_SeqBlC:		5.862923 sec
 	Tempo Médio MATRIZ_ThreadC:		2.244046 sec 
-	Tempo Médio MATRIZ_ThreadBlC:		3.215806 sec 
+	Tempo Médio MATRIZ_ThreadBlC:	3.215806 sec 
 
-	SPEEDUP (MATRIZ_C): 	1.83062
-	SPEEDUP (MATRIZ_BLC): 	1.82316
+	SPEEDUP (MATRIZ_C): 	1.83062 (183.06 %)
+	SPEEDUP (MATRIZ_BLC): 	1.82316 (182.32 %)
 ```
 
 ## Análise dinâmica:
@@ -118,15 +125,15 @@ Executando multiplicação multithread em bloco 10 de 10
 Para realizar uma análise dinâmica do código e verificar eventuais problemas, deve-se previamente ter instalado o programa *valgrind* e executar o comando abaixo:
 
 - Para main_thread.c:
-> `valgrind ./main_thread 4x5-mat.map 5x4-mat.map`
+> `valgrind ./main_thread 5x4-mat.map 4x5-mat.map `
 
 Será apresentado em tela:
 ```
-==22881== Memcheck, a memory error detector
-==22881== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
-==22881== Using Valgrind-3.13.0 and LibVEX; rerun with -h for copyright info
-==22881== Command: ./main_thread 4x5-mat.map 5x4-mat.map
-==22881== 
+==27120== Memcheck, a memory error detector
+==27120== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==27120== Using Valgrind-3.13.0 and LibVEX; rerun with -h for copyright info
+==27120== Command: ./main_thread 5x4-mat.map 4x5-mat.map
+==27120== 
 Executando multiplicação sequencial 10 de 10
 Executando multiplicação sequencial em bloco 10 de 10
 Executando multiplicação multithread 10 de 10
@@ -141,27 +148,27 @@ Executando multiplicação multithread em bloco 10 de 10
 	COMPARAR MATRIZ_SeqC c/ MATRIZ_ThreadBlC
 	** Matrizes são iguais **
 
-	Tempo Médio tempo_MATRIZ_SeqC:		0.000598 sec 
-	Tempo Médio tempo_MATRIZ_SeqBlC:	0.001338 sec
-	Tempo Médio MATRIZ_ThreadC:		0.018183 sec 
-	Tempo Médio MATRIZ_ThreadBlC:		0.000918 sec 
+	Tempo Médio MATRIZ_SeqC:	0.000597 sec 
+	Tempo Médio MATRIZ_SeqBlC:	0.001111 sec
+	Tempo Médio MATRIZ_ThreadC:	0.009865 sec 
+	Tempo Médio MATRIZ_ThreadBlC:	0.000586 sec 
 
-	SPEEDUP (MATRIZ_C): 	0.03288
-	SPEEDUP (MATRIZ_BLC): 	1.45714
+	SPEEDUP (MATRIZ_C): 	0.06055 (6.06 %)
+	SPEEDUP (MATRIZ_BLC): 	1.89550 (189.55 %)
 
-==22881== 
-==22881== HEAP SUMMARY:
-==22881==     in use at exit: 35,728 bytes in 1,506 blocks
-==22881==   total heap usage: 1,634 allocs, 128 frees, 67,615 bytes allocated
-==22881== 
-==22881== LEAK SUMMARY:
-==22881==    definitely lost: 8,176 bytes in 171 blocks
-==22881==    indirectly lost: 27,552 bytes in 1,335 blocks
-==22881==      possibly lost: 0 bytes in 0 blocks
-==22881==    still reachable: 0 bytes in 0 blocks
-==22881==         suppressed: 0 bytes in 0 blocks
-==22881== Rerun with --leak-check=full to see details of leaked memory
-==22881== 
-==22881== For counts of detected and suppressed errors, rerun with: -v
-==22881== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
+==27120== 
+==27120== HEAP SUMMARY:
+==27120==     in use at exit: 20,436 bytes in 853 blocks
+==27120==   total heap usage: 983 allocs, 130 frees, 51,955 bytes allocated
+==27120== 
+==27120== LEAK SUMMARY:
+==27120==    definitely lost: 4,016 bytes in 131 blocks
+==27120==    indirectly lost: 16,420 bytes in 722 blocks
+==27120==      possibly lost: 0 bytes in 0 blocks
+==27120==    still reachable: 0 bytes in 0 blocks
+==27120==         suppressed: 0 bytes in 0 blocks
+==27120== Rerun with --leak-check=full to see details of leaked memory
+==27120== 
+==27120== For counts of detected and suppressed errors, rerun with: -v
+==27120== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 0 from 0)
 ```
