@@ -1,5 +1,3 @@
-#include <pthread.h>
-
 #include <omp.h>
 #include <unistd.h>
 #include "matriz-operacoes-omp.h"
@@ -28,10 +26,15 @@ void *exec_multi_thread(void *arg)
     param_t *p = (param_t *)arg;
 
     //printf("exec_multi_thread with p->tid = %d\n", p->tid);
-
     multiplicarOMP(p->mat_a, p->mat_b, p->mat_c, p->tid, p->ntasks);
+
+//TODO - separar em blocos de tamanoh fixo (for i de 50 em 50, por exemplo)
+//para isso teria que trazer o for pra funcao main e poderia usar schedule dynamic
+//pra ir distribuindo conforme acabase de processar o anterior
+
     return NULL;
 }
+
 
 /*
 function exec_multi_thread_blocos
@@ -42,6 +45,7 @@ Instancia cada thread para multiplicacao de matriz em bloco
 void *exec_multi_thread_blocos(void *arg)
 {
     param_t *p = (param_t *)arg;
+    //printf("exec_multi_thread with p->tid = %d\n", p->tid);
     multiplicarOMPblocos(p->mat_bloco_a, p->mat_bloco_b, p->mat_bloco_c);
     return NULL;
 }
@@ -85,7 +89,6 @@ int main(int argc, char *argv[])
 
     //variaveis para controle de threads
     param_t *args;
-    pthread_t *threads;
 
     //variaveis para controle de tempo (runtime)
     double start_time, end_time;
@@ -106,6 +109,13 @@ int main(int argc, char *argv[])
     if (argv[3] != NULL){
         nro_submatrizes = atoi(argv[3]);
         ntasks = atoi(argv[3]);
+    }
+
+    //ajusta o número de tasks para ser proporcional ao número de processadores
+    if ( ntasks % omp_get_num_procs()  > 0 )
+    {
+        ntasks = ntasks - ( ntasks % omp_get_num_procs() );
+        printf("task number adjusted automatically to %d \n", ntasks);
     }
 
     // %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
@@ -212,8 +222,6 @@ int main(int argc, char *argv[])
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
 
 
-
-
     // %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
     // Multiplicação MultiThread
     printf("\n");
@@ -237,13 +245,12 @@ int main(int argc, char *argv[])
         fflush(stdout);
 
         mzerar(res_matriz_ThreadC);
-        threads = (pthread_t *)malloc(ntasks * sizeof(pthread_t));
         args = (param_t *)malloc(ntasks * sizeof(param_t));
         start_time = wtime();
 
         int tid;
         int nthreads;
-        #pragma omp parallel num_threads(ntasks) 
+        #pragma omp parallel private(tid,nthreads) num_threads(ntasks) 
         {
             tid = omp_get_thread_num();
             nthreads = omp_get_num_threads();
@@ -270,6 +277,11 @@ int main(int argc, char *argv[])
 
 
 
+
+
+
+
+
     // %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
     // Multiplicação MultiThreads em Bloco
     printf("\n");
@@ -283,22 +295,23 @@ int main(int argc, char *argv[])
         Vsubmat_b = particionar_matriz(mat_b.matriz, Lb, M, 0, nro_submatrizes);
         Vsubmat_c = csubmatrizv2(N, M, nro_submatrizes);
 
-        threads = (pthread_t *)malloc(ntasks * sizeof(pthread_t));
         args = (param_t *)malloc(ntasks * sizeof(param_t));
         start_time = wtime();
-        for (int i = 0; i < ntasks; i++)
-        {
-            args[i].tid = i;
-            args[i].ntasks = ntasks;
-            args[i].mat_bloco_a = Vsubmat_a[i];
-            args[i].mat_bloco_b = Vsubmat_b[i];
-            args[i].mat_bloco_c = Vsubmat_c[i];
-            pthread_create(&threads[i], NULL, exec_multi_thread_blocos, (void *)(args + i));
-        }
 
-        for (int i = 0; i < ntasks; i++)
+        int tid;
+        int nthreads;
+        #pragma omp parallel num_threads(ntasks) 
         {
-            pthread_join(threads[i], NULL);
+            tid = omp_get_thread_num();
+            nthreads = omp_get_num_threads();
+
+            args[tid].tid = tid;
+            args[tid].ntasks = nthreads;
+            args[tid].mat_bloco_a = Vsubmat_a[tid];
+            args[tid].mat_bloco_b = Vsubmat_b[tid];
+            args[tid].mat_bloco_c = Vsubmat_c[tid];
+            //printf("\n loop %d tid %d",count, tid);
+            exec_multi_thread_blocos((void *)(args + tid));
         }
         
         //soma os blocos separados
@@ -337,6 +350,7 @@ int main(int argc, char *argv[])
     printf("\tTempo Médio MATRIZ_ThreadBlC:\t%.6f sec \n", tempo_MATRIZ_ThreadBlC / count_for);
 
     speedup_seqC = (tempo_MATRIZ_SeqC / count_for) / (tempo_MATRIZ_ThreadC / count_for);
+
     speedup_BlC = (tempo_MATRIZ_SeqBlC / count_for) / (tempo_MATRIZ_ThreadBlC / count_for);
     printf("\n\tSPEEDUP (MATRIZ_C): \t%.5f (%.2f %c)", speedup_seqC, speedup_seqC*100, 37 );
     printf("\n\tSPEEDUP (MATRIZ_BLC): \t%.5f (%.2f %c)\n\n", speedup_BlC, speedup_BlC*100, 37 );

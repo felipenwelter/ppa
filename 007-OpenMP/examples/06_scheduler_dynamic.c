@@ -3,10 +3,20 @@
 #include <stdlib.h>
 #include <time.h>
 #include <unistd.h>
+/*
+#include <time.h>
+#include <sys/time.h>
+
+double wtime() {
+  struct timeval t;
+  gettimeofday(&t, NULL);
+  return t.tv_sec + (double) t.tv_usec / 1000000;
+}*/
 
 int main (int argc, char *argv[]) {
   int i, n = 10, tid;
 
+  //double start_time = wtime();
   #pragma omp parallel private(tid)
   {
    tid = omp_get_thread_num();
@@ -26,4 +36,8 @@ int main (int argc, char *argv[]) {
       }
   }
  }
+
+ //double end_time = wtime();
+ //printf("\nTempo:\t%.6f sec \n", end_time - start_time);
+
 }

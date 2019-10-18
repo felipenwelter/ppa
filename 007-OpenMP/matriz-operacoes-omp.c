@@ -1,3 +1,4 @@
+#include <omp.h>
 #include "matrizv3.h"
 #include "matriz-operacoesv3.h"
 
