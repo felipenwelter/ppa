@@ -19,7 +19,7 @@ Importante observar as seguintes variáveis que afetam a execução do programa:
 
 O speedup é calculado através da fórmula: TS/TP, sendo TS o tempo que demora para executar em código sequencial e TP o tempo em código paralelizado. Um speedup superior a 1 indica que houve ganho de performance.
 
-O tamanho da matriz é um fator determinante para haver speedup, ao executar a multiplicação com matrizes 5x4 e 4x5 a performance em thread é inferior devido ao overhead, porém para matrizes maiores como 1000x500 e 500x1000 o ganho é significativo. O resultado depende também do número de threads e blocos configurados estaticamente no programa. Outro fator a considerar é o aninhamento de for's na multiplicação das matrizes, que segue a mesma estrutura tanto nas operações sequenciais quato paralelas, já otimizada. Em testes realizados com aninhamentos ikj (consultar função mmultiplicar), foi possível obter melhor de mais de 100% em relação ao aninhamento jki.
+O tamanho da matriz é um fator determinante para haver speedup, ao executar a multiplicação com matrizes 5x4 e 4x5 a performance em thread é inferior devido ao overhead, porém para matrizes maiores como 1000x500 e 500x1000 o ganho é significativo. O resultado depende também do número de threads e blocos configurados estaticamente no programa. Outro fator a considerar é o aninhamento de for's na multiplicação das matrizes, que segue a mesma estrutura tanto nas operações sequenciais quato paralelas, já otimizada. Em testes realizados com aninhamentos ikj (consultar função mmultiplicar), foi possível obter melhora de mais de 100% em relação ao aninhamento jki.
 
 [BIBLIOTECAS IMPLEMENTADAS]
 - **matrizv3.h**: headers das funções de gerência de matrizes.
