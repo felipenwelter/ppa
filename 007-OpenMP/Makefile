@@ -9,7 +9,6 @@ all: $(TARGET)
 
 %.o: %.c
 	$(CC) $(CCFLAGS) -c $<
-	echo "export OMP_NUM_THREADS=<nroThread>"
 
 %: %.o
 	$(CC) $(LDFLAGS) $^ -o $@

@@ -14,7 +14,6 @@ typedef struct
     matriz_bloco_t *mat_bloco_c;
 } param_t;
 
-
 /*
 function exec_multi_thread
 Instancia cada thread para multiplicacao de matriz sequencial
@@ -24,17 +23,9 @@ Instancia cada thread para multiplicacao de matriz sequencial
 void *exec_multi_thread(void *arg)
 {
     param_t *p = (param_t *)arg;
-
-    //printf("exec_multi_thread with p->tid = %d\n", p->tid);
     multiplicarOMP(p->mat_a, p->mat_b, p->mat_c, p->tid, p->ntasks);
-
-//TODO - separar em blocos de tamanoh fixo (for i de 50 em 50, por exemplo)
-//para isso teria que trazer o for pra funcao main e poderia usar schedule dynamic
-//pra ir distribuindo conforme acabase de processar o anterior
-
     return NULL;
 }
-
 
 /*
 function exec_multi_thread_blocos
@@ -45,11 +36,9 @@ Instancia cada thread para multiplicacao de matriz em bloco
 void *exec_multi_thread_blocos(void *arg)
 {
     param_t *p = (param_t *)arg;
-    //printf("exec_multi_thread with p->tid = %d\n", p->tid);
     multiplicarOMPblocos(p->mat_bloco_a, p->mat_bloco_b, p->mat_bloco_c);
     return NULL;
 }
-
 
 /*
 function main
@@ -111,11 +100,15 @@ int main(int argc, char *argv[])
         ntasks = atoi(argv[3]);
     }
 
-    //ajusta o número de tasks para ser proporcional ao número de processadores
-    if ( ntasks % omp_get_num_procs()  > 0 )
-    {
+    //ajusta o número de tasks para ser proporcional ao número de processadores (otimizacao)
+    if ( ntasks % omp_get_num_procs()  > 0 ){
         ntasks = ntasks - ( ntasks % omp_get_num_procs() );
+        nro_submatrizes = ntasks;
         printf("task number adjusted automatically to %d \n", ntasks);
+    }else{
+        //garante que ntasks e nro_submatrizes tenham o mesmo valor
+        if ( ntasks != nro_submatrizes)
+            nro_submatrizes = ntasks;
     }
 
     // %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
@@ -175,7 +168,7 @@ int main(int argc, char *argv[])
         res_matriz_SeqC = mmultiplicar(&mat_a, &mat_b, 1);  //1=mais rápido (2.04), 5=mais lento (5.94)
         end_time = wtime();
         tempo_MATRIZ_SeqC += end_time - start_time;
-        //printf("sequencial %d. tempo: %.20f \t avg= %.20f\n",count, end_time - start_time, tempo_MATRIZ_SeqC / (count+1));
+        //printf(" sequencial %d. tempo: %.20f \t avg= %.20f\n",count, end_time - start_time, tempo_MATRIZ_SeqC / (count+1));
     }
     sprintf(filename, "MATRIZ_SeqC.result");
     fmat = fopen(filename, "w");
@@ -213,13 +206,15 @@ int main(int argc, char *argv[])
 
         end_time = wtime();
         tempo_MATRIZ_SeqBlC += end_time - start_time;
-        //printf("bloco %d. tempo: %.20f \t avg= %.20f\n",count, end_time - start_time, tempo_MATRIZ_SeqBlC / (count+1));
+        //printf(" bloco %d. tempo: %.20f \t avg= %.20f\n",count, end_time - start_time, tempo_MATRIZ_SeqBlC / (count+1));
     }
     sprintf(filename, "MATRIZ_SeqBlC.result");
     fmat = fopen(filename, "w");
     fileout_matriz(res_matriz_SeqBlC, fmat);
     fclose(fmat);
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
+
+
 
 
     // %%%%%%%%%%%%%%%%%%%%%%%% BEGIN %%%%%%%%%%%%%%%%%%%%%%%%
@@ -260,24 +255,17 @@ int main(int argc, char *argv[])
             args[tid].mat_a = &mat_a;
             args[tid].mat_b = &mat_b;
             args[tid].mat_c = res_matriz_ThreadC;
-            //printf("\n loop %d tid %d",count, tid);
             exec_multi_thread((void *)(args + tid));
         }
         end_time = wtime();
         tempo_MATRIZ_ThreadC += end_time - start_time;
-        //printf("sequencial thread %d. tempo: %.20f \t avg= %.20f\n",count, end_time - start_time, tempo_MATRIZ_ThreadC / (count+1));
-        
+        //printf(" sequencial thread %d. tempo: %.20f \t avg= %.20f\n",count, end_time - start_time, tempo_MATRIZ_ThreadC / (count+1));
     }
     sprintf(filename, "MATRIZ_ThreadC.result");
     fmat = fopen(filename, "w");
     fileout_matriz(res_matriz_ThreadC, fmat);
     fclose(fmat);
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
-
-
-
-
-
 
 
 
@@ -310,7 +298,6 @@ int main(int argc, char *argv[])
             args[tid].mat_bloco_a = Vsubmat_a[tid];
             args[tid].mat_bloco_b = Vsubmat_b[tid];
             args[tid].mat_bloco_c = Vsubmat_c[tid];
-            //printf("\n loop %d tid %d",count, tid);
             exec_multi_thread_blocos((void *)(args + tid));
         }
         
@@ -375,6 +362,60 @@ int main(int argc, char *argv[])
     mliberar(&mat_a);
     mliberar(&mat_b);
     // %%%%%%%%%%%%%%%%%%%%%%%% END %%%%%%%%%%%%%%%%%%%%%%%%
+
+    return 0;
+}
+
+
+
+
+
+
+/*
+function teste_reduction
+Funcao para testar a performance de utilizar o openmp reduction para paralelizar a multiplicacao
+e encontrar uma posicao (m,n) de uma matriz resultado. Os resultados nao foram satisfatórios para
+encontrar (m,n) na multiplicação de uma matriz 1000x1000:
+- tempo paralelo: 0.006206  resultado: 2406570
+- tempo serial:   0.000016  resultado: 2406570
+@return 0
+@param *mat_a, ponteiro para mymatriz base para multiplicacao
+@param *mat_b, ponteiro para mymatriz base para multiplicacao
+@param *mat_c, ponteiro para mymatriz resultado
+*/
+int teste_reduction(mymatriz *mat_a, mymatriz *mat_b, mymatriz *mat_c){
+    
+    //inicializa variáveis de controle dos for`s
+    int j_max = mat_b->lin;
+    int m = 0;
+    int n = 0;
+    double start_time, end_time, all_time;
+    int tot = 0;
+
+    //---------
+    start_time = wtime();
+    #pragma omp parallel for reduction(+:tot) num_threads(4)
+        for (int j = 0; j < j_max; j++){
+            tot += mat_a->matriz[m][j] * mat_b->matriz[j][n];
+            //printf("mat_c->matriz[%d][%d] (%d) = mat_a->matriz[%d][%d] (%d) * mat_b->matriz[%d][%d] (%d) \t thread %d\n",m,n,mat_c->matriz[m][n],m,j,mat_a->matriz[m][j],j,n,mat_b->matriz[j][n],omp_get_thread_num());
+        }
+
+    mat_c->matriz[m][n] = tot;
+    end_time = wtime();
+    all_time = end_time - start_time;
+    printf("\ntempo paralelo:\t %.6f resultado: %d\n",all_time,tot);
+    
+    //---------
+    tot = 0;
+    start_time = wtime();
+    for (int j = 0; j < j_max; j++){
+        tot += mat_a->matriz[m][j] * mat_b->matriz[j][n];
+        //printf("mat_c->matriz[%d][%d] (%d) = mat_a->matriz[%d][%d] (%d) * mat_b->matriz[%d][%d] (%d)\n",m,n,mat_c->matriz[m][n],m,j,mat_a->matriz[m][j],j,n,mat_b->matriz[j][n];
+    }
+    mat_c->matriz[m][n] = tot;
+    end_time = wtime();
+    all_time = end_time - start_time;
+    printf("tempo serial:\t %.6f resultado: %d\n",all_time,tot);
 
     return 0;
 }
