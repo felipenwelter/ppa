@@ -13,9 +13,12 @@ número de linhas e colunas. A matriz resultante terá a mesma configuração.
              - 0 para ij
              - 1 para ji
 */
-mymatriz *msomar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
-    mymatriz *res = malloc(sizeof(mymatriz));
+mymatriz *msomar (mymatriz *mat_a, mymatriz *mat_b, mymatriz *res, int tipo){
+    
+    //mymatriz *res = malloc(sizeof(mymatriz));
     int i_max, j_max; //auxiliares para controle de aninhamento
+
+    //printf("\n configuracoes: \n matriz 1 lin: %d\n matriz 1 col: %d\n matriz 2 lin: %d\n matriz 2 col: %d\n matriz 3 lin: %d\n matriz 3 col: %d\n", mat_a->lin, mat_a->col, mat_b->lin, mat_b->col, res->lin, res->col);
 
     //verifica se foi alocado memória para a matriz
     if ( (mat_a == NULL) || (mat_b == NULL)) {
@@ -27,19 +30,6 @@ mymatriz *msomar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
     if (mat_a->col != mat_b->col || mat_a->lin != mat_b->lin ){
         printf ("** Erro: Matrizes devem ter mesma configuração para que se possa somar. **\n");
         return NULL;
-    }
-
-    //matriz resultado
-	res->matriz = NULL;
-	res->lin = mat_a->lin;
-	res->col = mat_a->col;
-
-    //realiza a alocação de memória para matriz resultado
-    if (malocar(res)) {
-	printf ("ERROR: Out of memory\n");
-	exit(1);
-    }else{
-        mzerar(res);
     }
 
     //define aninhamento, conforme parametro tipo
@@ -71,7 +61,7 @@ mymatriz *msomar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
             
         }
     }
-    
+
     return res;
 }
 
@@ -94,8 +84,9 @@ tendo o número de linhas da primeira e o número de colunas da segunda. Ex: 3x4
              - 5 para jki
 
 */
-mymatriz *mmultiplicar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
-    mymatriz *res = malloc(sizeof(mymatriz));
+mymatriz *mmultiplicar (mymatriz *mat_a, mymatriz *mat_b, mymatriz *res, int tipo){
+    
+    //mymatriz *res = malloc(sizeof(mymatriz));
     int i_max, j_max, k_max; //auxiliares para controle de aninhamento
 
     //verifica se foi alocado memória para a matriz
@@ -114,7 +105,7 @@ mymatriz *mmultiplicar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
 	res->matriz = NULL;
 	res->lin = mat_a->lin;
 	res->col = mat_b->col;
-
+    
     //realiza a alocação de memória para matriz resultado
     if (malocar(res)) {
 		printf ("ERROR: Out of memory\n");
@@ -194,6 +185,7 @@ mymatriz *mmultiplicar (mymatriz *mat_a, mymatriz *mat_b, int tipo){
             break;
             
     }
+
 
         /*for (int i = 0; i < i_max; i++){
             for (int j = 0; j < j_max; j++){

@@ -1,4 +1,4 @@
-#include <omp.h>
+#include <mpi.h>
 #include "matrizv3.h"
 #include "matriz-operacoesv3.h"
 
@@ -14,9 +14,41 @@ Realiza multiplicacao de matriz sequencial, para threads usando OMP
 */
 int multiplicarOMP(mymatriz *mat_a, mymatriz *mat_b, mymatriz *mat_c, int tid, int ntasks)
 {
-    
+
+	int rank,size,i;
+	int tag=0;
+	MPI_Status status;
+	char msg[20];
+
+    MPI_Init(NULL, NULL);
+
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+        MPI_Comm_size(MPI_COMM_WORLD, &size);
+
+
+        //MPI_Bcast(void *buffer, int count, MPI_Datatype, int root, MPI_Comm comm);
+
+        strcpy(msg,"Hello World!\n");
+        MPI_Bcast(msg, 20, MPI_CHAR, 0, MPI_COMM_WORLD);
+        printf("Message received: %s\n", msg);
+
+        /*if(rank == 0) {
+            strcpy(msg,"Hello World!\n");
+            for(i=1;i<size;i++) {
+                printf("0 enviando 20 para %d\n", i);
+                MPI_Send(msg,20,MPI_CHAR,i,tag, MPI_COMM_WORLD);
+            }
+        } else {
+            printf("%d esta esperando\n", rank);
+            MPI_Recv(msg,20,MPI_CHAR,0,tag, MPI_COMM_WORLD, &status);
+            printf("Message received: %s\n", msg);
+        }*/
+
+    MPI_Finalize();
+
+
     //inicializa variáveis de controle dos for`s
-    int i_max = mat_a->lin;
+    /*int i_max = mat_a->lin;
     int j_max = mat_b->col;
     int k_max = mat_a->col;
 
@@ -27,7 +59,7 @@ int multiplicarOMP(mymatriz *mat_a, mymatriz *mat_b, mymatriz *mat_c, int tid, i
                 //printf("mat_c->matriz[%d][%d] = %d, calculado por thread %d\n",i,j,mat_c->matriz[i][j],tid);
             }
         }
-    }
+    }*/
 
     return 0;
 }
