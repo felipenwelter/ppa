@@ -1,6 +1,6 @@
 #include <unistd.h>
-#include <mpi.h>
 #include "matriz-operacoes-mpi.h"
+//#include <mpi.h>
 
 //Variaveis executar calculo da média
 int ntasks = 4; //deve ser igual nro_submatrizes
@@ -104,7 +104,7 @@ double seqMultiplication(mymatriz* mat_a, mymatriz* mat_b, mymatriz* mat_c){
         mmultiplicar(mat_a, mat_b, mat_c, 1);  //1=mais rápido (2.04), 5=mais lento (5.94)
         end_time = wtime();
         tempo_MATRIZ_SeqC += end_time - start_time;
-        //printf(" sequencial %d. tempo: %.20f \t avg= %.20f\n",count, end_time - start_time, tempo_MATRIZ_SeqC / (count+1));
+        printf(" sequencial %d. tempo: %.20f \t avg= %.20f\n",count, end_time - start_time, tempo_MATRIZ_SeqC / (count+1));
     }
 
     sprintf(filename, "MATRIZ_SeqC.result");
@@ -134,8 +134,8 @@ double blcMultiplication(mymatriz* mat_a, mymatriz* mat_b, mymatriz* mat_c){
 
     for (int count = 0; count < count_for; count++)
     {
-        printf("\rExecutando multiplicação sequencial em bloco %d de %d", count+1, count_for);
-        fflush(stdout);
+        //printf("\rExecutando multiplicação sequencial em bloco %d de %d", count+1, count_for);
+        //fflush(stdout);
 
         start_time = wtime();
         Vsubmat_a = particionar_matriz(mat_a->matriz, mat_a->lin, mat_a->col, 1, nro_submatrizes);
@@ -168,7 +168,7 @@ double blcMultiplication(mymatriz* mat_a, mymatriz* mat_b, mymatriz* mat_c){
 
         end_time = wtime();
         tempo_MATRIZ_SeqBlC += end_time - start_time;
-        //printf(" bloco %d. tempo: %.20f \t avg= %.20f\n",count, end_time - start_time, tempo_MATRIZ_SeqBlC / (count+1));
+        printf(" bloco %d. tempo: %.20f \t avg= %.20f\n",count, end_time - start_time, tempo_MATRIZ_SeqBlC / (count+1));
     }
 
     sprintf(filename, "MATRIZ_SeqBlC.result");
@@ -219,8 +219,8 @@ int main(int argc, char *argv[])
 
             loadMatrix(argv[1], &mat_a);
             loadMatrix(argv[2], &mat_b);
-            mimprimir(&mat_a);
-            mimprimir(&mat_b);
+            //mimprimir(&mat_a);
+            //mimprimir(&mat_b);
 
             tempo_MATRIZ_SeqC = seqMultiplication(&mat_a, &mat_b, &res_matriz_SeqC);
             //printf("\n\tTempo Médio MATRIZ_SeqC:\t%.6f sec \n", tempo_MATRIZ_SeqC / count_for);
@@ -229,9 +229,16 @@ int main(int argc, char *argv[])
             mliberar(&res_matriz_SeqC);
 
             tempo_MATRIZ_SeqBlC = blcMultiplication(&mat_a, &mat_b, &res_matriz_SeqBlC);
-            mimprimir(&res_matriz_SeqBlC);
-            //mliberar(&res_matriz_SeqBlC);
+            mliberar(&res_matriz_SeqBlC);
 
+
+
+
+
+            // Impressao dos resultados de tempo
+            printf("\n\n\tCOMPARAR MATRIZ_SeqC c/ MATRIZ_SeqBlC\n\t");
+            mcomparar(&res_matriz_SeqC, &res_matriz_SeqBlC);
+            
             printf("\n\tTempo Médio MATRIZ_SeqC:\t%.6f sec \n", tempo_MATRIZ_SeqC / count_for);
             printf("\tTempo Médio MATRIZ_SeqBlC:\t%.6f sec\n", tempo_MATRIZ_SeqBlC / count_for );
 

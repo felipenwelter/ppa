@@ -1,4 +1,4 @@
-#include <mpi.h>
+//#include <mpi.h>
 #include "matrizv3.h"
 #include "matriz-operacoesv3.h"
 
@@ -15,22 +15,22 @@ Realiza multiplicacao de matriz sequencial, para threads usando OMP
 int multiplicarOMP(mymatriz *mat_a, mymatriz *mat_b, mymatriz *mat_c, int tid, int ntasks)
 {
 
-	int rank,size,i;
-	int tag=0;
-	MPI_Status status;
-	char msg[20];
+	//int rank,size,i;
+	//int tag=0;
+	//MPI_Status status;
+	//char msg[20];
 
-    MPI_Init(NULL, NULL);
+    //MPI_Init(NULL, NULL);
 
-        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-        MPI_Comm_size(MPI_COMM_WORLD, &size);
+       // MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+       // MPI_Comm_size(MPI_COMM_WORLD, &size);
 
 
         //MPI_Bcast(void *buffer, int count, MPI_Datatype, int root, MPI_Comm comm);
 
-        strcpy(msg,"Hello World!\n");
-        MPI_Bcast(msg, 20, MPI_CHAR, 0, MPI_COMM_WORLD);
-        printf("Message received: %s\n", msg);
+        //strcpy(msg,"Hello World!\n");
+        //MPI_Bcast(msg, 20, MPI_CHAR, 0, MPI_COMM_WORLD);
+        //printf("Message received: %s\n", msg);
 
         /*if(rank == 0) {
             strcpy(msg,"Hello World!\n");
@@ -44,7 +44,7 @@ int multiplicarOMP(mymatriz *mat_a, mymatriz *mat_b, mymatriz *mat_c, int tid, i
             printf("Message received: %s\n", msg);
         }*/
 
-    MPI_Finalize();
+    //MPI_Finalize();
 
 
     //inicializa variáveis de controle dos for`s
