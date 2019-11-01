@@ -1,6 +1,6 @@
 #include <unistd.h>
 #include "matriz-operacoes-mpi.h"
-//#include <mpi.h>
+#include <mpi.h>
 
 //Variaveis executar calculo da média
 int ntasks = 4; //deve ser igual nro_submatrizes
@@ -28,6 +28,49 @@ Instancia cada thread para multiplicacao de matriz sequencial
 void *exec_multi_thread(void *arg)
 {
     param_t *p = (param_t *)arg;
+
+	int rank, size;//,i;
+    int num = 0;
+	//int tag=0;
+	//MPI_Status status;
+    char processor_name[MPI_MAX_PROCESSOR_NAME];
+    int name_len;
+    
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    MPI_Comm_size(MPI_COMM_WORLD, &size);
+    MPI_Get_processor_name(processor_name, &name_len);
+
+
+    //
+    //
+    //
+    //https://stackoverflow.com/questions/5104847/mpi-bcast-a-dynamic-2d-array
+    //
+    //
+    //
+    
+
+    if (rank == 0){
+        //mimprimir(p->mat_b);
+        //printf("\n ################## (rank %d) p->mat_b->matriz[0][0] = %d \n ", rank, p->mat_b->matriz[0][0]);
+        //num = 9;
+        //MPI_Bcast(&num, 1, MPI_INT, 0, MPI_COMM_WORLD);
+
+        p->mat_b->matriz[0][1] = 99;
+        printf("\n ################## before (rank %d) p->mat_b->matriz[0][1] = %d \n ", rank, p->mat_b->matriz[0][1]);
+
+        MPI_Bcast(&(p->mat_b->matriz[0][0]), p->mat_b->lin * p->mat_b->col, MPI_INT, 0, MPI_COMM_WORLD);
+    }else{
+        //printf("\n(before) rank %d processor name: %s num: %d\n",rank,processor_name,num);
+        printf("\n ################## before (rank %d) p->mat_b->matriz[0][1] = %d \n ", rank, p->mat_b->matriz[0][1]);
+        MPI_Bcast(&(p->mat_b->matriz[0][0]), p->mat_b->lin * p->mat_b->col, MPI_INT, 0, MPI_COMM_WORLD);
+        //mimprimir(p->mat_b);
+    }
+
+    printf("\n ################## after (rank %d) p->mat_b->matriz[0][1] = %d \n ", rank, p->mat_b->matriz[0][1]);
+
+    //printf("\n(after)rank %d processor name: %s num: %d\n",rank,processor_name,num);
+
     multiplicarOMP(p->mat_a, p->mat_b, p->mat_c, p->tid, p->ntasks);
     return NULL;
 }
@@ -104,7 +147,7 @@ double seqMultiplication(mymatriz* mat_a, mymatriz* mat_b, mymatriz* mat_c){
         mmultiplicar(mat_a, mat_b, mat_c, 1);  //1=mais rápido (2.04), 5=mais lento (5.94)
         end_time = wtime();
         tempo_MATRIZ_SeqC += end_time - start_time;
-        printf(" sequencial %d. tempo: %.20f \t avg= %.20f\n",count, end_time - start_time, tempo_MATRIZ_SeqC / (count+1));
+        //printf(" sequencial %d. tempo: %.20f \t avg= %.20f\n",count, end_time - start_time, tempo_MATRIZ_SeqC / (count+1));
     }
 
     sprintf(filename, "MATRIZ_SeqC.result");
@@ -168,7 +211,7 @@ double blcMultiplication(mymatriz* mat_a, mymatriz* mat_b, mymatriz* mat_c){
 
         end_time = wtime();
         tempo_MATRIZ_SeqBlC += end_time - start_time;
-        printf(" bloco %d. tempo: %.20f \t avg= %.20f\n",count, end_time - start_time, tempo_MATRIZ_SeqBlC / (count+1));
+        //printf(" bloco %d. tempo: %.20f \t avg= %.20f\n",count, end_time - start_time, tempo_MATRIZ_SeqBlC / (count+1));
     }
 
     sprintf(filename, "MATRIZ_SeqBlC.result");
@@ -197,24 +240,28 @@ int main(int argc, char *argv[])
     mymatriz mat_a, mat_b;
     mymatriz res_matriz_SeqC;
     mymatriz res_matriz_SeqBlC;
+    mymatriz res_matriz_ThreadC;
+    
 
     double tempo_MATRIZ_SeqC = 0;
     double tempo_MATRIZ_SeqBlC = 0;
 
-	//int rank, size;//,i;
+    //variaveis para controle de threads
+    param_t *args;
+
+	int rank, size;//,i;
 	//int tag=0;
 	//MPI_Status status;
-	//char msg[20];
+    char processor_name[MPI_MAX_PROCESSOR_NAME];
+    int name_len;
 
-    //MPI_Init(&argc, &argv);
+    MPI_Init(&argc, &argv);
 
-        //MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-        //MPI_Comm_size(MPI_COMM_WORLD, &size);
+        MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+        MPI_Comm_size(MPI_COMM_WORLD, &size);
+        MPI_Get_processor_name(processor_name, &name_len);
 
-        //strcpy(msg,"Hello World!\n");
-        //MPI_Bcast(msg, 20, MPI_CHAR, 0, MPI_COMM_WORLD);
-
-        //if(rank == 0) {
+        if(rank >= 0) {
             //printf("Message received %d: %s\n", rank, msg);
 
             loadMatrix(argv[1], &mat_a);
@@ -225,6 +272,7 @@ int main(int argc, char *argv[])
             tempo_MATRIZ_SeqC = seqMultiplication(&mat_a, &mat_b, &res_matriz_SeqC);
             //printf("\n\tTempo Médio MATRIZ_SeqC:\t%.6f sec \n", tempo_MATRIZ_SeqC / count_for);
             tempo_MATRIZ_SeqBlC = blcMultiplication(&mat_a, &mat_b, &res_matriz_SeqBlC);
+
 
 
 
@@ -240,11 +288,27 @@ int main(int argc, char *argv[])
             mliberar(&res_matriz_SeqBlC);
 
 
-        //}else{
-        //    printf("Message received (%d): %s\n", rank, msg);
-        //}
 
-    //MPI_Finalize();
+
+        }else{
+        //    printf("Message received (%d): %s\n", rank, msg);
+        }
+
+
+        int tid = rank;
+        args = (param_t *)malloc(ntasks * sizeof(param_t));
+        args[tid].tid = tid;
+        args[tid].ntasks = 0;
+        args[tid].mat_a = &mat_a;
+        //if (rank == 0){
+            args[tid].mat_b = &mat_b;
+        //}else{
+        //    args[tid].mat_b = &mat_a;
+        //}
+        args[tid].mat_c = &res_matriz_ThreadC;
+        exec_multi_thread((void *)(args + tid));
+
+    MPI_Finalize();
 
 
     return 0;
