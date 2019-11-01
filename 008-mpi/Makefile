@@ -21,6 +21,7 @@ gmat: matrizv3.o toolsv3.o gera_matrizv3.c
 		$(CC) $(CCFLAGS) matrizv3.o toolsv3.o gera_matrizv3.c -o $@ $(LDFLAGS)
 
 #run: mpirun -np 4 main_mpi
+#run: mpirun -np 6 --hostfile mp main_mpi (antes ssh ppa-2)
 
 clean:
 	rm -f *.o *~ $(TARGET)

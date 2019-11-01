@@ -224,23 +224,20 @@ int main(int argc, char *argv[])
 
             tempo_MATRIZ_SeqC = seqMultiplication(&mat_a, &mat_b, &res_matriz_SeqC);
             //printf("\n\tTempo Médio MATRIZ_SeqC:\t%.6f sec \n", tempo_MATRIZ_SeqC / count_for);
-
-            //Liberação de memória
-            mliberar(&res_matriz_SeqC);
-
             tempo_MATRIZ_SeqBlC = blcMultiplication(&mat_a, &mat_b, &res_matriz_SeqBlC);
-            mliberar(&res_matriz_SeqBlC);
-
-
 
 
 
             // Impressao dos resultados de tempo
             printf("\n\n\tCOMPARAR MATRIZ_SeqC c/ MATRIZ_SeqBlC\n\t");
-            mcomparar(&res_matriz_SeqC, &res_matriz_SeqBlC);
-            
+            mcomparar(&res_matriz_SeqC, &res_matriz_SeqBlC);            
+
             printf("\n\tTempo Médio MATRIZ_SeqC:\t%.6f sec \n", tempo_MATRIZ_SeqC / count_for);
             printf("\tTempo Médio MATRIZ_SeqBlC:\t%.6f sec\n", tempo_MATRIZ_SeqBlC / count_for );
+
+            //Liberação de memória
+            mliberar(&res_matriz_SeqC);
+            mliberar(&res_matriz_SeqBlC);
 
 
         //}else{
