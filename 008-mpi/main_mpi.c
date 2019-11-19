@@ -29,50 +29,42 @@ void *exec_multi_thread(void *arg)
 {
     param_t *p = (param_t *)arg;
 
-	int rank, size;//,i;
+	int rank, size;
     int num = 0;
-	//int tag=0;
-	//MPI_Status status;
-    char processor_name[MPI_MAX_PROCESSOR_NAME];
     int name_len;
-    
-    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
+    int start = 0;
+
+    MPI_Status status;
     MPI_Comm_size(MPI_COMM_WORLD, &size);
-    MPI_Get_processor_name(processor_name, &name_len);
 
+    if (p->tid == 0){
+        
+        //p->mat_b->matriz[0][2] = 91;
+        //printf("[%d] Sending the new value %d\n", p->tid, p->mat_b->matriz[0][2]);
+        MPI_Bcast(&(p->mat_b->matriz[0][0]), p->mat_b->col, MPI_INT, 0, MPI_COMM_WORLD);
 
-    //
-    //
-    //
-    //https://stackoverflow.com/questions/5104847/mpi-bcast-a-dynamic-2d-array
-    //
-    //
-    //
-    
+        for (int y = 1; y < size; y++) {
+            start = y-1;
+            MPI_Send(&start,1,MPI_INT,y,0,MPI_COMM_WORLD);
+            //start += (p->mat_a->lin / (size-1) );
+        }
 
-    if (rank == 0){
-        //mimprimir(p->mat_b);
-        //printf("\n ################## (rank %d) p->mat_b->matriz[0][0] = %d \n ", rank, p->mat_b->matriz[0][0]);
-        //num = 9;
-        //MPI_Bcast(&num, 1, MPI_INT, 0, MPI_COMM_WORLD);
-
-        p->mat_b->matriz[0][1] = 99;
-        printf("\n ################## before (rank %d) p->mat_b->matriz[0][1] = %d \n ", rank, p->mat_b->matriz[0][1]);
-
-        MPI_Bcast(&(p->mat_b->matriz[0][0]), p->mat_b->lin * p->mat_b->col, MPI_INT, 0, MPI_COMM_WORLD);
     }else{
-        //printf("\n(before) rank %d processor name: %s num: %d\n",rank,processor_name,num);
-        printf("\n ################## before (rank %d) p->mat_b->matriz[0][1] = %d \n ", rank, p->mat_b->matriz[0][1]);
-        MPI_Bcast(&(p->mat_b->matriz[0][0]), p->mat_b->lin * p->mat_b->col, MPI_INT, 0, MPI_COMM_WORLD);
-        //mimprimir(p->mat_b);
+
+        printf("[%d] Slave called\n", p->tid);
+        //printf("[%d] I have the values %d %d %d\n", p->tid, p->mat_b->matriz[0][0], p->mat_b->matriz[0][1], p->mat_b->matriz[0][2]);
+        MPI_Bcast(&(p->mat_b->matriz[0][0]), p->mat_b->col, MPI_INT, 0, MPI_COMM_WORLD);
+        //printf("[%d] Just received the value %d %d %d\n", p->tid, p->mat_b->matriz[0][0], p->mat_b->matriz[0][1], p->mat_b->matriz[0][2]) ;
+
+        MPI_Recv(&start,1,MPI_INT,0,0,MPI_COMM_WORLD, &status);
+        printf("[%d] received the lin value equals %d and will jump %d\n", p->tid, start, (p->ntasks-1) );
+
+        multiplicarOMP(p->mat_a, p->mat_b, p->mat_c, start, (p->ntasks - 1) );
+
+
     }
 
-    printf("\n ################## after (rank %d) p->mat_b->matriz[0][1] = %d \n ", rank, p->mat_b->matriz[0][1]);
-
-    //printf("\n(after)rank %d processor name: %s num: %d\n",rank,processor_name,num);
-
-    multiplicarOMP(p->mat_a, p->mat_b, p->mat_c, p->tid, p->ntasks);
-    return NULL;
+    return 0;
 }
 
 /*
@@ -251,61 +243,59 @@ int main(int argc, char *argv[])
 
 	int rank, size;//,i;
 	//int tag=0;
-	//MPI_Status status;
-    char processor_name[MPI_MAX_PROCESSOR_NAME];
     int name_len;
 
     MPI_Init(&argc, &argv);
 
         MPI_Comm_rank(MPI_COMM_WORLD, &rank);
         MPI_Comm_size(MPI_COMM_WORLD, &size);
-        MPI_Get_processor_name(processor_name, &name_len);
 
-        if(rank >= 0) {
-            //printf("Message received %d: %s\n", rank, msg);
-
-            loadMatrix(argv[1], &mat_a);
-            loadMatrix(argv[2], &mat_b);
+        loadMatrix(argv[1], &mat_a);
+        loadMatrix(argv[2], &mat_b);
+        
+        if (rank == 0){
             //mimprimir(&mat_a);
             //mimprimir(&mat_b);
+        }
 
-            tempo_MATRIZ_SeqC = seqMultiplication(&mat_a, &mat_b, &res_matriz_SeqC);
+        if(rank == 0) {
+            //printf("[%d] Master called\n", rank);
+
+
+            ////tempo_MATRIZ_SeqC = seqMultiplication(&mat_a, &mat_b, &res_matriz_SeqC);
             //printf("\n\tTempo Médio MATRIZ_SeqC:\t%.6f sec \n", tempo_MATRIZ_SeqC / count_for);
-            tempo_MATRIZ_SeqBlC = blcMultiplication(&mat_a, &mat_b, &res_matriz_SeqBlC);
+            ////tempo_MATRIZ_SeqBlC = blcMultiplication(&mat_a, &mat_b, &res_matriz_SeqBlC);
 
 
 
 
             // Impressao dos resultados de tempo
-            printf("\n\n\tCOMPARAR MATRIZ_SeqC c/ MATRIZ_SeqBlC\n\t");
-            mcomparar(&res_matriz_SeqC, &res_matriz_SeqBlC);            
+            ////printf("\n\n\tCOMPARAR MATRIZ_SeqC c/ MATRIZ_SeqBlC\n\t");
+            ////mcomparar(&res_matriz_SeqC, &res_matriz_SeqBlC);            
 
-            printf("\n\tTempo Médio MATRIZ_SeqC:\t%.6f sec \n", tempo_MATRIZ_SeqC / count_for);
-            printf("\tTempo Médio MATRIZ_SeqBlC:\t%.6f sec\n", tempo_MATRIZ_SeqBlC / count_for );
+            ////printf("\n\tTempo Médio MATRIZ_SeqC:\t%.6f sec \n", tempo_MATRIZ_SeqC / count_for);
+            ////printf("\tTempo Médio MATRIZ_SeqBlC:\t%.6f sec\n", tempo_MATRIZ_SeqBlC / count_for );
 
             //Liberação de memória
-            mliberar(&res_matriz_SeqC);
-            mliberar(&res_matriz_SeqBlC);
+            ////mliberar(&res_matriz_SeqC);
+            ////mliberar(&res_matriz_SeqBlC);
 
+       
 
-
-
-        }else{
-        //    printf("Message received (%d): %s\n", rank, msg);
+        }else{ 
+            
         }
 
 
         int tid = rank;
         args = (param_t *)malloc(ntasks * sizeof(param_t));
+
         args[tid].tid = tid;
-        args[tid].ntasks = 0;
+        args[tid].ntasks = size;
         args[tid].mat_a = &mat_a;
-        //if (rank == 0){
-            args[tid].mat_b = &mat_b;
-        //}else{
-        //    args[tid].mat_b = &mat_a;
-        //}
+        args[tid].mat_b = &mat_b;
         args[tid].mat_c = &res_matriz_ThreadC;
+        
         exec_multi_thread((void *)(args + tid));
 
     MPI_Finalize();
