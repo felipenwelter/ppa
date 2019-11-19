@@ -1,7 +1,7 @@
 # GNU Makefile
 
 CC = gcc
-CCFLAGS = -Wall
+CCFLAGS = -Wall -O3
 LDFLAGS = -fopenmp
 TARGET = gmat main_omp help
 
