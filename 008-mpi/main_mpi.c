@@ -7,6 +7,10 @@ int ntasks = 4; //deve ser igual nro_submatrizes
 int nro_submatrizes = 4; //deve ser igual ntasks
 int count_for = 10; //numero de repeticoes para média de runtime
 
+int N = 4;
+
+void print_results(char *prompt, int a[N][N], int lin, int col);
+
 typedef struct
 {
     int tid;
@@ -30,41 +34,113 @@ void *exec_multi_thread(void *arg)
     param_t *p = (param_t *)arg;
 
 	int rank, size;
-    int num = 0;
-    int name_len;
-    int start = 0;
 
-    MPI_Status status;
+    int *arrayA, *arrayB, *arrayC;
+    int *recA, *recB, *recC;
+    int sizeA, sizeB, sizeC;
+    int pos;
+
+    sizeA = p->mat_a->lin * p->mat_a->col;
+    sizeB = p->mat_b->lin * p->mat_b->col;
+    sizeC = p->mat_a->lin * p->mat_b->col;
+    arrayA = (int*) malloc( sizeA * sizeof(int*) );
+    arrayB = (int*) malloc( sizeB * sizeof(int*) );
+    arrayC = (int*) malloc( sizeC * sizeof(int*) );
+
     MPI_Comm_size(MPI_COMM_WORLD, &size);
+    MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
     if (p->tid == 0){
-        
-        //p->mat_b->matriz[0][2] = 91;
-        //printf("[%d] Sending the new value %d\n", p->tid, p->mat_b->matriz[0][2]);
-        MPI_Bcast(&(p->mat_b->matriz[0][0]), p->mat_b->col, MPI_INT, 0, MPI_COMM_WORLD);
 
-        for (int y = 1; y < size; y++) {
-            start = y-1;
-            MPI_Send(&start,1,MPI_INT,y,0,MPI_COMM_WORLD);
-            //start += (p->mat_a->lin / (size-1) );
+        pos = 0;
+        for (int i = 0; i < p->mat_a->lin; i++) {
+            for (int j = 0; j < p->mat_a->col; j++){
+                arrayA[pos++] = p->mat_a->matriz[i][j];
+            }
         }
 
-    }else{
-
-        printf("[%d] Slave called\n", p->tid);
-        //printf("[%d] I have the values %d %d %d\n", p->tid, p->mat_b->matriz[0][0], p->mat_b->matriz[0][1], p->mat_b->matriz[0][2]);
-        MPI_Bcast(&(p->mat_b->matriz[0][0]), p->mat_b->col, MPI_INT, 0, MPI_COMM_WORLD);
-        //printf("[%d] Just received the value %d %d %d\n", p->tid, p->mat_b->matriz[0][0], p->mat_b->matriz[0][1], p->mat_b->matriz[0][2]) ;
-
-        MPI_Recv(&start,1,MPI_INT,0,0,MPI_COMM_WORLD, &status);
-        printf("[%d] received the lin value equals %d and will jump %d\n", p->tid, start, (p->ntasks-1) );
-
-        multiplicarOMP(p->mat_a, p->mat_b, p->mat_c, start, (p->ntasks - 1) );
-
+        pos = 0;
+        for (int i = 0; i < p->mat_b->lin; i++) {
+            for (int j = 0; j < p->mat_b->col; j++){
+                arrayB[pos++] = p->mat_b->matriz[i][j];
+            }
+        }
 
     }
 
+    //allocating local data
+    recA = (int*) malloc( sizeA/size * sizeof(int*) );
+    recC = (int*) malloc( sizeC/size * sizeof(int*) );
+
+	if (arrayB == NULL ){
+        printf ("NULL\n");
+        arrayB = (int*) malloc( sizeB * sizeof(int*) );
+    }
+
+    // now p0 scatter matrix sendA to all 
+    MPI_Scatter( arrayA , sizeA/size , MPI_INT , recA , sizeA/size , MPI_INT , 0, MPI_COMM_WORLD );
+
+    //if (rank == 4){
+    //    printf("thread %d - ",rank);
+    //    for (int i = 0; i < (sizeA/size); i++){
+    //        printf("%d ",recA[i]);
+    //    }
+    //    printf("\n");
+    //}
+
+    //now p0 broadcast sendB to all others
+    MPI_Bcast ( arrayB, sizeB , MPI_INT , 0 , MPI_COMM_WORLD );
+
+    //sleep(rank);
+	// all do this part to calculate recC as multiplicated matrix
+    int n = p->mat_b->col;	
+    for ( int i=0 ; i < (p->mat_a->lin/size); i++ ){
+        for ( int j = 0 ; j < p->mat_b->col; j++ ){
+            recC[i*n+j] = 0;
+            //printf("[%d] recC[%d] = %d when i = %d and j = %d\n ", rank, (i * p->mat_b->col) + j, recC[(i * p->mat_b->col) + j], i, j);
+            for ( int k = 0 ; k < p->mat_a->col ; k++ ){
+                //printf("%d ", i*n+j);
+                recC[i*n+j] += recA[i*n+k]*arrayB[k*n+j];
+                //printf (" process %d recC [%d] = % d  | %d x %d \n" , rank , i*n+j , recC[i*n+j] , recA[i*n+k], arrayB[k*n+j]) ;    
+            }
+        }
+    }
+
+    //sleep(rank);
+    //printf("\nthread %d \n", rank);
+    //for (int i = 0; i < sizeC/size; i++)
+    //    printf("%d ", recC[i]);
+    //printf("\n");
+
+    // now p0 will gather all result data from all prcesses
+    MPI_Gather( recC , sizeC/size , MPI_INT , arrayC , sizeC/size , MPI_INT , 0, MPI_COMM_WORLD ) ;
+
+	MPI_Barrier(MPI_COMM_WORLD); /* barrier is needed if no necessary synchronization for the timing is ensured yet */
+
+    if (rank == 0){
+        printf("\n\n");
+        for (int i = 0; i < sizeC; i++){
+            printf("arrayC[%d] = %d\n", i, arrayC[i]);
+        }
+    }
+
     return 0;
+}
+
+
+
+void print_results(char *prompt, int a[N][N], int lin, int col)
+{
+    int i, j;
+
+    printf ("\n\n%s\n", prompt);
+    for (i = 0; i < lin; i++) {
+            for (j = 0; j < col; j++) {
+                    printf(" %d", a[i][j]);
+            }
+            printf ("\n");
+    }
+    printf ("\n\n");
 }
 
 /*
@@ -79,6 +155,7 @@ void *exec_multi_thread_blocos(void *arg)
     multiplicarOMPblocos(p->mat_bloco_a, p->mat_bloco_b, p->mat_bloco_c);
     return NULL;
 }
+
 
 
 
@@ -230,20 +307,19 @@ int main(int argc, char *argv[])
    
     //variaveis para armazenar matrizes origem e de resultado
     mymatriz mat_a, mat_b;
-    mymatriz res_matriz_SeqC;
-    mymatriz res_matriz_SeqBlC;
+    //mymatriz res_matriz_SeqC;
+    //mymatriz res_matriz_SeqBlC;
     mymatriz res_matriz_ThreadC;
     
 
-    double tempo_MATRIZ_SeqC = 0;
-    double tempo_MATRIZ_SeqBlC = 0;
+    //double tempo_MATRIZ_SeqC = 0;
+    //double tempo_MATRIZ_SeqBlC = 0;
 
     //variaveis para controle de threads
     param_t *args;
 
 	int rank, size;//,i;
 	//int tag=0;
-    int name_len;
 
     MPI_Init(&argc, &argv);
 
@@ -297,6 +373,11 @@ int main(int argc, char *argv[])
         args[tid].mat_c = &res_matriz_ThreadC;
         
         exec_multi_thread((void *)(args + tid));
+
+
+int teste;
+
+
 
     MPI_Finalize();
 
