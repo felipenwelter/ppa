@@ -1,7 +1,7 @@
 # GNU Makefile
 
 CC = mpicc
-CCFLAGS = -Wall -O3
+CCFLAGS = -Wall
 LDFLAGS =
 #LDFLAGS = -llmpe -lmpe
 TARGET = gmat main_mpi help
