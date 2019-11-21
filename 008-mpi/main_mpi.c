@@ -9,8 +9,6 @@ int count_for = 10; //numero de repeticoes para média de runtime
 
 int N = 4;
 
-void print_results(char *prompt, int a[N][N], int lin, int col);
-
 typedef struct
 {
     int tid;
@@ -29,16 +27,19 @@ Instancia cada thread para multiplicacao de matriz sequencial
 @return NULL
 @param *arg, ponteiro para objeto param_t
 */
-void *exec_multi_thread(void *arg)
+double exec_multi_thread(void *arg)
 {
     param_t *p = (param_t *)arg;
 
+    //variable declaration
 	int rank, size;
-
     int *arrayA, *arrayB, *arrayC;
-    int *recA, *recB, *recC;
+    int *recA, *recC;
     int sizeA, sizeB, sizeC;
     int pos;
+
+    double start_time, end_time;
+    double tempo_MATRIZ_ThreadC = 0;
 
     sizeA = p->mat_a->lin * p->mat_a->col;
     sizeB = p->mat_b->lin * p->mat_b->col;
@@ -47,9 +48,12 @@ void *exec_multi_thread(void *arg)
     arrayB = (int*) malloc( sizeB * sizeof(int*) );
     arrayC = (int*) malloc( sizeC * sizeof(int*) );
 
+    //identify mpi thread and number of threads (size)
     MPI_Comm_size(MPI_COMM_WORLD, &size);
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
 
+    //transform the matrix mat_a and mat_b into a big vector
+    //so we can use scatter and gather
     if (p->tid == 0){
 
         pos = 0;
@@ -68,80 +72,51 @@ void *exec_multi_thread(void *arg)
 
     }
 
-    //allocating local data
+    //to allocate local data (part of each thread)
     recA = (int*) malloc( sizeA/size * sizeof(int*) );
     recC = (int*) malloc( sizeC/size * sizeof(int*) );
 
-	if (arrayB == NULL ){
-        printf ("NULL\n");
-        arrayB = (int*) malloc( sizeB * sizeof(int*) );
-    }
-
-    // now p0 scatter matrix sendA to all 
+    MPI_Barrier(MPI_COMM_WORLD);
+    start_time = wtime();
+    
+    //thread master scatter matrix arrayA to the other threads
     MPI_Scatter( arrayA , sizeA/size , MPI_INT , recA , sizeA/size , MPI_INT , 0, MPI_COMM_WORLD );
 
-    //if (rank == 4){
-    //    printf("thread %d - ",rank);
-    //    for (int i = 0; i < (sizeA/size); i++){
-    //        printf("%d ",recA[i]);
-    //    }
-    //    printf("\n");
-    //}
-
-    //now p0 broadcast sendB to all others
+    //thread master broadcast arrayB to the other threads
     MPI_Bcast ( arrayB, sizeB , MPI_INT , 0 , MPI_COMM_WORLD );
 
-    //sleep(rank);
-	// all do this part to calculate recC as multiplicated matrix
+	//calculate recC as multiplicated matrix
+    //warning: just work in a square matrix multiple of the number of threads, ex: 5 threads -> 5x5, 10x10, 15x15... matrix
     int n = p->mat_b->col;	
     for ( int i=0 ; i < (p->mat_a->lin/size); i++ ){
         for ( int j = 0 ; j < p->mat_b->col; j++ ){
             recC[i*n+j] = 0;
-            //printf("[%d] recC[%d] = %d when i = %d and j = %d\n ", rank, (i * p->mat_b->col) + j, recC[(i * p->mat_b->col) + j], i, j);
             for ( int k = 0 ; k < p->mat_a->col ; k++ ){
-                //printf("%d ", i*n+j);
                 recC[i*n+j] += recA[i*n+k]*arrayB[k*n+j];
-                //printf (" process %d recC [%d] = % d  | %d x %d \n" , rank , i*n+j , recC[i*n+j] , recA[i*n+k], arrayB[k*n+j]) ;    
             }
         }
     }
 
-    //sleep(rank);
-    //printf("\nthread %d \n", rank);
-    //for (int i = 0; i < sizeC/size; i++)
-    //    printf("%d ", recC[i]);
-    //printf("\n");
-
-    // now p0 will gather all result data from all prcesses
+    //thread master gather all result data from all the slaves
     MPI_Gather( recC , sizeC/size , MPI_INT , arrayC , sizeC/size , MPI_INT , 0, MPI_COMM_WORLD ) ;
 
-	MPI_Barrier(MPI_COMM_WORLD); /* barrier is needed if no necessary synchronization for the timing is ensured yet */
+	MPI_Barrier(MPI_COMM_WORLD);
+    end_time = wtime();
+    tempo_MATRIZ_ThreadC += end_time - start_time;
 
+    //set the big vector into the result matrix
     if (rank == 0){
-        printf("\n\n");
-        for (int i = 0; i < sizeC; i++){
-            printf("arrayC[%d] = %d\n", i, arrayC[i]);
+        pos = 0;
+        for (int i = 0; i < p->mat_c->lin; i++) {
+            for (int j = 0; j < p->mat_c->col; j++){
+                p->mat_c->matriz[i][j] = arrayC[pos++];
+            }
         }
     }
 
-    return 0;
+    return tempo_MATRIZ_ThreadC;
 }
 
-
-
-void print_results(char *prompt, int a[N][N], int lin, int col)
-{
-    int i, j;
-
-    printf ("\n\n%s\n", prompt);
-    for (i = 0; i < lin; i++) {
-            for (j = 0; j < col; j++) {
-                    printf(" %d", a[i][j]);
-            }
-            printf ("\n");
-    }
-    printf ("\n\n");
-}
 
 /*
 function exec_multi_thread_blocos
@@ -307,13 +282,14 @@ int main(int argc, char *argv[])
    
     //variaveis para armazenar matrizes origem e de resultado
     mymatriz mat_a, mat_b;
-    //mymatriz res_matriz_SeqC;
-    //mymatriz res_matriz_SeqBlC;
+    mymatriz res_matriz_SeqC;
+    mymatriz res_matriz_SeqBlC;
     mymatriz res_matriz_ThreadC;
     
 
-    //double tempo_MATRIZ_SeqC = 0;
-    //double tempo_MATRIZ_SeqBlC = 0;
+    double tempo_MATRIZ_SeqC = 0;
+    double tempo_MATRIZ_SeqBlC = 0;
+    double tempo_MATRIZ_ThreadC = 0;
 
     //variaveis para controle de threads
     param_t *args;
@@ -338,23 +314,10 @@ int main(int argc, char *argv[])
             //printf("[%d] Master called\n", rank);
 
 
-            ////tempo_MATRIZ_SeqC = seqMultiplication(&mat_a, &mat_b, &res_matriz_SeqC);
+            tempo_MATRIZ_SeqC = seqMultiplication(&mat_a, &mat_b, &res_matriz_SeqC);
             //printf("\n\tTempo Médio MATRIZ_SeqC:\t%.6f sec \n", tempo_MATRIZ_SeqC / count_for);
-            ////tempo_MATRIZ_SeqBlC = blcMultiplication(&mat_a, &mat_b, &res_matriz_SeqBlC);
+            tempo_MATRIZ_SeqBlC = blcMultiplication(&mat_a, &mat_b, &res_matriz_SeqBlC);
 
-
-
-
-            // Impressao dos resultados de tempo
-            ////printf("\n\n\tCOMPARAR MATRIZ_SeqC c/ MATRIZ_SeqBlC\n\t");
-            ////mcomparar(&res_matriz_SeqC, &res_matriz_SeqBlC);            
-
-            ////printf("\n\tTempo Médio MATRIZ_SeqC:\t%.6f sec \n", tempo_MATRIZ_SeqC / count_for);
-            ////printf("\tTempo Médio MATRIZ_SeqBlC:\t%.6f sec\n", tempo_MATRIZ_SeqBlC / count_for );
-
-            //Liberação de memória
-            ////mliberar(&res_matriz_SeqC);
-            ////mliberar(&res_matriz_SeqBlC);
 
        
 
@@ -362,6 +325,14 @@ int main(int argc, char *argv[])
             
         }
 
+
+        // Multiplicação MultiThread
+        printf("\n");
+        //res_matriz_ThreadC.matriz = malloc(sizeof(mymatriz));
+        res_matriz_ThreadC.matriz = NULL;
+        res_matriz_ThreadC.lin = mat_a.lin;
+        res_matriz_ThreadC.col = mat_b.col;
+        malocar(&res_matriz_ThreadC);
 
         int tid = rank;
         args = (param_t *)malloc(ntasks * sizeof(param_t));
@@ -372,11 +343,27 @@ int main(int argc, char *argv[])
         args[tid].mat_b = &mat_b;
         args[tid].mat_c = &res_matriz_ThreadC;
         
-        exec_multi_thread((void *)(args + tid));
+        tempo_MATRIZ_ThreadC = exec_multi_thread((void *)(args + tid));
 
+        if(rank == 0) {
 
-int teste;
+            // Impressao dos resultados de tempo
+            printf("\n\n\tCOMPARAR MATRIZ_SeqC c/ MATRIZ_SeqBlC\n\t");
+            mcomparar(&res_matriz_SeqC, &res_matriz_SeqBlC);
 
+            printf("\n\n\tCOMPARAR MATRIZ_SeqC c/ MATRIZ_ThreadC\n\t");
+            mcomparar(&res_matriz_SeqC, &res_matriz_ThreadC); 
+
+            printf("\n\tTempo Médio MATRIZ_SeqC:\t%.6f sec \n", tempo_MATRIZ_SeqC / count_for);
+            printf("\tTempo Médio MATRIZ_SeqBlC:\t%.6f sec\n", tempo_MATRIZ_SeqBlC / count_for );
+            printf("\n\tTempo Médio MATRIZ_ThreadC:\t%.6f sec \n", tempo_MATRIZ_ThreadC);
+
+            //Liberação de memória
+            mliberar(&res_matriz_SeqC);
+            mliberar(&res_matriz_SeqBlC);
+            mliberar(&res_matriz_ThreadC);
+
+        }
 
 
     MPI_Finalize();
