@@ -158,8 +158,8 @@ int main(int argc, char *argv[])
         printf("\n\tSPEEDUP (MATRIZ_C): \t%.5f (%.2f %c)", speedup_seqC, speedup_seqC*100, 37 );
         printf("\n\tSPEEDUP (MATRIZ_BLC): \t%.5f (%.2f %c)\n\n", speedup_BlC, speedup_BlC*100, 37 );
 
-        if ((speedup_BlC < 2) && (mat_a.lin >= 1000))
-            printf("Warning: if you couldn't experience a good speedup, try again and change thread configuration");
+        if ((speedup_BlC < 1) && (mat_a.lin >= 1000))
+            printf("Warning: if you couldn't experience a good speedup, try again and change thread configuration\n");
 
         //Liberação de memória
         mliberar(&res_matriz_SeqC);
