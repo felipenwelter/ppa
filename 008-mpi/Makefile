@@ -30,6 +30,4 @@ help:
 	@echo
 	@echo
 	@echo "####### Exemplo de Execução #######"
-	@echo "./main_mpi 5x4-mat.map 4x5-mat.map"
-	@echo "./main_mpi 1000x500-mat.map 500x1000-mat.map 10"
-	@echo "mpirun -np 2 --hostfile mp main_mpi 5x4-mat.map 4x5-mat.map"
+	@echo "mpirun -np 2 --hostfile mp main_mpi 4x4-mat.map 4x4-mat.map"

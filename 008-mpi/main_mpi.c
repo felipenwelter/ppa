@@ -63,14 +63,22 @@ int main(int argc, char *argv[])
     loadMatrix(argv[2], &mat_b);
         
     if (rank == 0){
-        if (mat_a.lin != mat_a.col)
+        if (mat_a.lin != mat_a.col){
             printf ("** ERRO: Matriz A não é uma matriz quadrada **\n");
-        if (mat_b.lin != mat_b.col)
+            exit(1);
+        }
+        if (mat_b.lin != mat_b.col){
             printf ("** ERRO: Matriz B não é uma matriz quadrada **\n");
-        if (mat_a.lin != mat_b.lin)
+            exit(1);
+        }
+        if (mat_a.lin != mat_b.lin){
             printf ("** ERRO: Matriz A e Matriz B não possuem as mesmas configurações **\n");
-        if ((mat_a.lin % size) > 0)  //the number of rows and columns must be divisible by the number of threads
+            exit(1);
+        }
+        if ((mat_a.lin % size) > 0){  //the number of rows and columns must be divisible by the number of threads
             printf ("** ERRO: Número de threads não é proporcional ao tamanho da matriz **\n");
+            exit(1);
+        }
     }
 
     if(rank == 0) {
