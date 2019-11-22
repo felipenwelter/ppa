@@ -30,4 +30,4 @@ help:
 	@echo
 	@echo
 	@echo "####### Exemplo de Execução #######"
-	@echo "mpirun -np 2 --hostfile mp main_mpi 4x4-mat.map 4x4-mat.map"
+	@echo "mpirun -np 4 --hostfile mp main_mpi 1000x1000-mat.map 1000x1000-mat.map"

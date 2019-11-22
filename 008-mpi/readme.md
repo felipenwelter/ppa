@@ -15,10 +15,11 @@ Implementação no arquivo main_mpi.c.
 Importante observar as seguintes condições que afetam a execução do programa:
 - o programa está configurado para trabalhar com multiplicação de matrizes quadradas (em especial o processo de scatter e gather na multiplicação em threads);
 - o número de linhas/colunas da matriz deve ser divisível pelo número de threads, por exemplo: para matriz 100x100 pode utilizar 2 ou 4 threads, mas não 3.
+- caso venha a executar o programa utilizando mais de uma máquina, é importante realizar um ssh em cada uma das máquinas para garantir que estão se comunicando, além de copiar o arquivo de execução entre elas. As configurações ficam no arquivo (hostfile) mp.
 
 O speedup é calculado através da fórmula: TS/TP, sendo TS o tempo que demora para executar em código sequencial e TP o tempo em código paralelizado. Um speedup superior a 1 indica que houve ganho de performance.
 
-O tamanho da matriz é um fator determinante para haver speedup, ao executar a multiplicação com matrizes 4x4 e 4x4 a performance em thread é inferior devido ao overhead, porém para matrizes maiores como 1000x1000 e 1000x1000 pode se perceber ganho. O resultado depende também do número de threads e blocos configurados estaticamente no programa.
+O tamanho da matriz é um fator determinante para haver speedup, ao executar a multiplicação entre matrizes 4x4 a performance em thread é inferior devido ao overhead, porém para matrizes maiores como 1000x1000 pode se perceber ganho. O resultado depende também do número de threads e blocos configurados no programa.
 
 [BIBLIOTECAS IMPLEMENTADAS]
 - **matrizv3.h**: headers das funções de gerência de matrizes.
@@ -54,7 +55,7 @@ mpicc -Wall -O3 matriz-operacoesv3.o matrizv3.o toolsv3.o matriz-operacoes-mpi.o
 
 
 ####### Exemplo de Execução #######
-mpirun -np 2 --hostfile mp main_mpi 4x4-mat.map 4x4-mat.map
+mpirun -np 4 --hostfile mp main_mpi 1000x1000-mat.map 1000x1000-mat.map
 ```
 
 ## Execução:
@@ -68,10 +69,10 @@ Será apresentado em tela:
 ```
 	#0	#1	#2	#3	#4	
 0:	[92]	[99]	[43]	[36]	[46]	
-1:	[69]	[70]	[4]	[76]	[34]	
+1:	[69]	[70]	[42]	[76]	[34]	
 2:	[41]	[43]	[30]	[99]	[54]	
 3:	[43]	[50]	[64]	[92]	[22]	
-4:	[22]	[6]	[31]	[7]	[93]	
+4:	[22]	[61]	[31]	[72]	[93]	
 
 		**** PRINT mat_c NxM(5,5) **** 
 #####
@@ -79,24 +80,23 @@ Será apresentado em tela:
 #####
 	#0	#1	#2	#3	#4	
 0:	[92]	[99]	[43]	[36]	[46]	
-1:	[69]	[70]	[4]	[76]	[34]	
+1:	[69]	[70]	[42]	[76]	[34]	
 2:	[41]	[43]	[30]	[99]	[54]	
 3:	[43]	[50]	[64]	[92]	[22]	
-4:	[22]	[6]	[31]	[7]	[93]	
+4:	[22]	[61]	[31]	[72]	[93]	
 
 ##### Arquivo 5x5-mat.map: VERIFICADO! #####
 ```
 
 - Para main_mpi.c:
-> `./main_omp 1000x1000-mat.map 1000x1000-mat.map`
-
-O terceiro parâmetro é opcional e identifica o número de threads e blocos.
+> `mpirun -np 4 --hostfile mp main_mpi 1000x1000-mat.map 1000x1000-mat.map`
 
 Será apresentado em tela:
-```Executando multiplicação sequencial 10 de 10
-Executando multiplicação sequencial em bloco 10 de 10
-Executando multiplicação multithread 10 de 10
-Executando multiplicação multithread em bloco 10 de 10
+```
+Executando multiplicação sequencial  .. OK
+Executando multiplicação em blocos  .. OK
+Executando multiplicação sequencial em threads .. OK
+Executando multiplicação blocos em threads .. OK
 
 	COMPARAR MATRIZ_SeqC c/ MATRIZ_SeqBlC
 	** Matrizes são iguais **
@@ -107,11 +107,11 @@ Executando multiplicação multithread em bloco 10 de 10
 	COMPARAR MATRIZ_SeqC c/ MATRIZ_ThreadBlC
 	** Matrizes são iguais **
 
-	Tempo Médio MATRIZ_SeqC:	8.256238 sec 
-	Tempo Médio MATRIZ_SeqBlC:	11.441760 sec
-	Tempo Médio MATRIZ_ThreadC:	4.234516 sec 
-	Tempo Médio MATRIZ_ThreadBlC:	6.078120 sec 
+	Tempo Médio MATRIZ_SeqC:		10.101747 sec 
+	Tempo Médio MATRIZ_SeqBlC:		21.454070 sec
+	Tempo Médio MATRIZ_ThreadC:		4.615389 sec 
+	Tempo Médio MATRIZ_ThreadBlC:	6.105211 sec 
 
-	SPEEDUP (MATRIZ_C): 	1.94975 (194.97 %)
-	SPEEDUP (MATRIZ_BLC): 	1.88245 (188.25 %)
+	SPEEDUP (MATRIZ_C): 	2.18871 (218.87 %)
+	SPEEDUP (MATRIZ_BLC): 	3.51406 (351.41 %)
 ```
